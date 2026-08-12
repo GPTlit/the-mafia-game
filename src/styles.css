@@ -167,5 +167,29 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-body);
+    background-image: radial-gradient(
+      ellipse at top,
+      oklch(0.24 0.03 20 / 45%),
+      transparent 60%
+    );
   }
+
+  h1,
+  h2,
+  h3,
+  .display {
+    font-family: var(--font-display);
+    letter-spacing: 0.02em;
+  }
+}
+
+@utility carbon {
+  background-image: var(--carbon);
+}
+
+@utility panel {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
 }
