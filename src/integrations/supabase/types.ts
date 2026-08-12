@@ -14,16 +14,292 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      messages: {
+        Row: {
+          audio_url: string | null
+          channel: Database["public"]["Enums"]["chat_channel"]
+          content: string | null
+          created_at: string
+          id: string
+          room_id: string
+          sender_id: string | null
+        }
+        Insert: {
+          audio_url?: string | null
+          channel?: Database["public"]["Enums"]["chat_channel"]
+          content?: string | null
+          created_at?: string
+          id?: string
+          room_id: string
+          sender_id?: string | null
+        }
+        Update: {
+          audio_url?: string | null
+          channel?: Database["public"]["Enums"]["chat_channel"]
+          content?: string | null
+          created_at?: string
+          id?: string
+          room_id?: string
+          sender_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      night_actions: {
+        Row: {
+          detective_target_user_id: string | null
+          doctor_target_user_id: string | null
+          id: string
+          resolved: boolean
+          room_id: string
+          round_number: number
+          wolf_target_user_id: string | null
+        }
+        Insert: {
+          detective_target_user_id?: string | null
+          doctor_target_user_id?: string | null
+          id?: string
+          resolved?: boolean
+          room_id: string
+          round_number: number
+          wolf_target_user_id?: string | null
+        }
+        Update: {
+          detective_target_user_id?: string | null
+          doctor_target_user_id?: string | null
+          id?: string
+          resolved?: boolean
+          room_id?: string
+          round_number?: number
+          wolf_target_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "night_actions_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          phone_number: string | null
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id: string
+          phone_number?: string | null
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          phone_number?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
+      room_players: {
+        Row: {
+          card_seen: boolean
+          created_at: string
+          id: string
+          is_alive: boolean
+          is_ready: boolean
+          role: Database["public"]["Enums"]["player_role"] | null
+          room_id: string
+          self_heal_used: boolean
+          user_id: string
+        }
+        Insert: {
+          card_seen?: boolean
+          created_at?: string
+          id?: string
+          is_alive?: boolean
+          is_ready?: boolean
+          role?: Database["public"]["Enums"]["player_role"] | null
+          room_id: string
+          self_heal_used?: boolean
+          user_id: string
+        }
+        Update: {
+          card_seen?: boolean
+          created_at?: string
+          id?: string
+          is_alive?: boolean
+          is_ready?: boolean
+          role?: Database["public"]["Enums"]["player_role"] | null
+          room_id?: string
+          self_heal_used?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_players_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rooms: {
+        Row: {
+          created_at: string
+          current_phase: Database["public"]["Enums"]["game_phase"] | null
+          host_id: string
+          id: string
+          phase_ends_at: string | null
+          room_code: string
+          round_number: number
+          speaker_index: number
+          status: Database["public"]["Enums"]["room_status"]
+          winner: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_phase?: Database["public"]["Enums"]["game_phase"] | null
+          host_id: string
+          id?: string
+          phase_ends_at?: string | null
+          room_code: string
+          round_number?: number
+          speaker_index?: number
+          status?: Database["public"]["Enums"]["room_status"]
+          winner?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_phase?: Database["public"]["Enums"]["game_phase"] | null
+          host_id?: string
+          id?: string
+          phase_ends_at?: string | null
+          room_code?: string
+          round_number?: number
+          speaker_index?: number
+          status?: Database["public"]["Enums"]["room_status"]
+          winner?: string | null
+        }
+        Relationships: []
+      }
+      votes: {
+        Row: {
+          created_at: string
+          id: string
+          room_id: string
+          round_number: number
+          target_id: string
+          voter_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          room_id: string
+          round_number: number
+          target_id: string
+          voter_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          room_id?: string
+          round_number?: number
+          target_id?: string
+          voter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      begin_night: {
+        Args: { p_room_id: string; p_round: number }
+        Returns: undefined
+      }
+      cast_vote: {
+        Args: { p_room_id: string; p_target: string }
+        Returns: undefined
+      }
+      check_win: { Args: { p_room_id: string }; Returns: string }
+      confirm_card: { Args: { p_room_id: string }; Returns: undefined }
+      create_room: { Args: never; Returns: string }
+      detective_check: {
+        Args: { p_room_id: string; p_target: string }
+        Returns: boolean
+      }
+      doctor_heal: {
+        Args: { p_room_id: string; p_target: string }
+        Returns: undefined
+      }
+      finish_or_next_night: { Args: { p_room_id: string }; Returns: undefined }
+      get_room_state: { Args: { p_room_id: string }; Returns: Json }
+      is_room_member: { Args: { p_room_id: string }; Returns: boolean }
+      join_room: { Args: { p_code: string }; Returns: string }
+      my_role: {
+        Args: { p_room_id: string }
+        Returns: Database["public"]["Enums"]["player_role"]
+      }
+      pass_turn: { Args: { p_room_id: string }; Returns: undefined }
+      resolve_night: { Args: { p_room_id: string }; Returns: undefined }
+      resolve_votes: { Args: { p_room_id: string }; Returns: undefined }
+      role_counts: {
+        Args: { p_total: number }
+        Returns: {
+          detectives: number
+          doctors: number
+          wolves: number
+        }[]
+      }
+      room_id_by_code: { Args: { p_code: string }; Returns: string }
+      room_is_finished: { Args: { p_room_id: string }; Returns: boolean }
+      set_ready: {
+        Args: { p_ready: boolean; p_room_id: string }
+        Returns: undefined
+      }
+      start_game: { Args: { p_room_id: string }; Returns: undefined }
+      tick_room: { Args: { p_room_id: string }; Returns: undefined }
+      wolf_vote: {
+        Args: { p_room_id: string; p_target: string }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      chat_channel: "GLOBAL" | "WOLF_PRIVATE" | "DETECTIVE_PRIVATE"
+      game_phase:
+        | "ROLE_DISTRIBUTION"
+        | "NIGHT_WOLVES"
+        | "NIGHT_DETECTIVE"
+        | "NIGHT_DOCTOR"
+        | "NIGHT_RESULT"
+        | "DAY_DISCUSSION"
+        | "DAY_VOTING"
+      player_role: "WOLF" | "DOCTOR" | "DETECTIVE" | "CIVILIAN"
+      room_status: "LOBBY" | "IN_PROGRESS" | "FINISHED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +426,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      chat_channel: ["GLOBAL", "WOLF_PRIVATE", "DETECTIVE_PRIVATE"],
+      game_phase: [
+        "ROLE_DISTRIBUTION",
+        "NIGHT_WOLVES",
+        "NIGHT_DETECTIVE",
+        "NIGHT_DOCTOR",
+        "NIGHT_RESULT",
+        "DAY_DISCUSSION",
+        "DAY_VOTING",
+      ],
+      player_role: ["WOLF", "DOCTOR", "DETECTIVE", "CIVILIAN"],
+      room_status: ["LOBBY", "IN_PROGRESS", "FINISHED"],
+    },
   },
 } as const
