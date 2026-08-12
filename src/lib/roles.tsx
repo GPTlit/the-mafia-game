@@ -64,9 +64,16 @@ export const ROLES: Record<RoleKey, RoleMeta> = {
   },
 };
 
-export function WolfSigil({ className }: { className?: string }) {
+export function WolfSigil({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
-    <svg viewBox="0 0 100 90" fill="none" stroke="currentColor" strokeWidth="4" className={className}>
+    <svg
+      viewBox="0 0 100 90"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="4"
+      className={className}
+      style={style}
+    >
       <path d="M12 8 L22 34 L50 22 L78 34 L88 8 L84 46 L50 82 L16 46 Z" />
       <path d="M50 40 L62 52 L50 66 L38 52 Z" />
     </svg>
@@ -140,7 +147,7 @@ export function GameCard({
           color: dark ? "oklch(0.95 0 0)" : "oklch(0.2 0.01 285)",
         }}
       >
-        <WolfSigil className="h-6 w-8" style={{ color: meta.tone } as never} />
+        <WolfSigil className="h-6 w-8" style={{ color: meta.tone }} />
         <p
           className="display mt-1 text-[11px] font-bold tracking-[0.25em]"
           style={{ color: meta.tone }}
