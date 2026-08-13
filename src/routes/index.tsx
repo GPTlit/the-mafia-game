@@ -1,10 +1,11 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useSession";
 import { AuthPanel } from "@/components/AuthPanel";
 import { api } from "@/lib/game";
 import { GameCard, ROLES, WolfSigil, type RoleKey } from "@/lib/roles";
+import { LanguageSwitcher, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { t } = useI18n();
   const { session, loading } = useSession();
   const navigate = useNavigate();
   const [code, setCode] = useState("");
@@ -75,10 +77,13 @@ function Index() {
   if (!session) {
     return (
       <main className="min-h-screen px-4 py-10">
+        <div className="mx-auto mb-4 flex max-w-sm justify-end">
+          <LanguageSwitcher />
+        </div>
         <AuthPanel />
         <section className="mx-auto mt-10 max-w-sm">
           <p className="display text-center text-[11px] tracking-widest text-muted-foreground uppercase">
-            The four cards
+            {t("home.fourCards")}
           </p>
           <div className="mt-3 grid grid-cols-4 gap-2">
             {(Object.keys(ROLES) as RoleKey[]).map((r) => (
@@ -97,39 +102,42 @@ function Index() {
           <WolfSigil className="h-7 w-9 text-primary" />
           <h1 className="display text-2xl font-bold uppercase">Wolf Night</h1>
         </div>
-        <button
-          onClick={() => void supabase.auth.signOut()}
-          className="text-xs text-muted-foreground underline"
-        >
-          Sign out
-        </button>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+          <button
+            onClick={() => void supabase.auth.signOut()}
+            className="text-xs text-muted-foreground underline"
+          >
+            {t("nav.signOut")}
+          </button>
+        </div>
       </header>
 
       <p className="mt-4 text-sm text-muted-foreground">
-        Welcome back{username ? `, ${username}` : ""}. Gather 6 to 15 players.
+        {t("home.welcome", { name: username ? `, ${username}` : "" })}
       </p>
 
       <div className="panel mt-6 p-5">
-        <h2 className="display text-sm font-bold tracking-widest uppercase">Host a game</h2>
+        <h2 className="display text-sm font-bold tracking-widest uppercase">{t("home.host")}</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          You get a room code to share. You start the game once everyone is ready.
+          {t("home.hostHint")}
         </p>
         <button
           onClick={() => void create()}
           disabled={busy}
           className="display mt-4 w-full rounded-md bg-primary px-4 py-3 text-sm font-bold tracking-widest text-primary-foreground uppercase disabled:opacity-50"
         >
-          Create room
+          {t("home.create")}
         </button>
       </div>
 
       <div className="panel mt-4 p-5">
-        <h2 className="display text-sm font-bold tracking-widest uppercase">Join a game</h2>
+        <h2 className="display text-sm font-bold tracking-widest uppercase">{t("home.join")}</h2>
         <div className="mt-3 flex gap-2">
           <input
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
-            placeholder="ROOM CODE"
+            placeholder={t("home.code")}
             maxLength={5}
             className="display flex-1 rounded-md border border-input bg-secondary px-3 py-2.5 tracking-[0.3em] outline-none focus:border-primary"
           />
@@ -138,16 +146,27 @@ function Index() {
             disabled={busy || code.trim().length < 4}
             className="display rounded-md border border-primary px-4 text-xs font-bold tracking-widest text-primary uppercase disabled:opacity-40"
           >
-            Join
+            {t("home.joinCta")}
           </button>
         </div>
       </div>
 
       {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
 
+      <div className="panel mt-4 p-5">
+        <h2 className="display text-sm font-bold tracking-widest uppercase">{t("home.offline")}</h2>
+        <p className="mt-1 text-xs text-muted-foreground">{t("home.offlineHint")}</p>
+        <Link
+          to="/offline"
+          className="display mt-4 block rounded-md border border-primary px-4 py-3 text-center text-sm font-bold tracking-widest text-primary uppercase"
+        >
+          {t("home.offlinePlay")}
+        </Link>
+      </div>
+
       <section className="mt-8">
         <p className="display text-[11px] tracking-widest text-muted-foreground uppercase">
-          The four cards
+          {t("home.fourCards")}
         </p>
         <div className="mt-3 grid grid-cols-4 gap-2">
           {(Object.keys(ROLES) as RoleKey[]).map((r) => (

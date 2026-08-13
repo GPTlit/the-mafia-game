@@ -1,4 +1,5 @@
 import { ROLES, type RoleKey } from "@/lib/roles";
+import { useI18n } from "@/lib/i18n";
 import type { Player } from "@/lib/game";
 
 export function PlayerGrid({
@@ -20,6 +21,7 @@ export function PlayerGrid({
   showReady?: boolean;
   speakerId?: string | null;
 }) {
+  const { t } = useI18n();
   return (
     <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
       {players.map((p) => {
@@ -43,7 +45,7 @@ export function PlayerGrid({
                 />
                 {speakerId === p.user_id && (
                   <span className="absolute -right-1 -bottom-1 rounded-full bg-accent px-1 text-[9px] font-bold text-accent-foreground">
-                    MIC
+                    {t("state.mic")}
                   </span>
                 )}
                 {voteCounts[p.user_id] ? (
@@ -54,11 +56,11 @@ export function PlayerGrid({
               </div>
               <p className="mt-1 truncate text-xs font-semibold">
                 {p.username}
-                {p.user_id === meId ? " (you)" : ""}
+                {p.user_id === meId ? t("state.you") : ""}
               </p>
               {role && (
                 <p className="display text-[9px] tracking-widest" style={{ color: ROLES[role].tone }}>
-                  {ROLES[role].label}
+                  {t(`role.${role}.label`)}
                 </p>
               )}
               {!p.is_alive && (
@@ -70,7 +72,7 @@ export function PlayerGrid({
                     p.is_ready ? "text-civilian" : "text-muted-foreground"
                   }`}
                 >
-                  {p.is_ready ? "READY" : "WAITING"}
+                  {p.is_ready ? t("state.ready") : t("state.waiting")}
                 </p>
               )}
             </button>
