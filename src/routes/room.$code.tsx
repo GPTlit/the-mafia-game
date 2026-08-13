@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useSession";
 import { useCountdown, useRoom } from "@/hooks/useRoom";
-import { api, phaseLabel, type Player } from "@/lib/game";
+import { api, phaseKey, type Player } from "@/lib/game";
+import { LanguageSwitcher, useI18n, type TFunc } from "@/lib/i18n";
 import { GameCard, ROLES, WolfSigil, type RoleKey } from "@/lib/roles";
 import { PlayerGrid } from "@/components/PlayerGrid";
 import { Chat } from "@/components/Chat";
@@ -66,6 +67,7 @@ function RoomPage() {
 }
 
 function Room({ roomId, code }: { roomId: string; code: string }) {
+  const { t } = useI18n();
   const { state, messages, error, refresh } = useRoom(roomId);
   const secondsLeft = useCountdown(state?.room.phase_ends_at);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -119,18 +121,19 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
         <div className="flex items-center gap-2">
           <WolfSigil className="h-6 w-8 text-primary" />
           <div>
-            <p className="display text-lg leading-none font-bold uppercase">Room {code}</p>
+            <p className="display text-lg leading-none font-bold uppercase">{t("room.title", { code })}</p>
             <p className="text-[11px] text-muted-foreground">
-              {players.length} players · {living.length} alive
-              {room.round_number > 0 ? ` · round ${room.round_number}` : ""}
+              {t("room.meta", { players: players.length, alive: living.length })}
+              {room.round_number > 0 ? t("room.round", { n: room.round_number }) : ""}
             </p>
           </div>
         </div>
-        <div className="text-right">
+        <div className="text-end">
+          <LanguageSwitcher className="justify-end" />
           <p className="display text-xs tracking-widest text-primary uppercase">
-            {phaseLabel(phase, room.status)}
+            {t(phaseKey(phase, room.status))}
           </p>
-          {room.phase_ends_at && room.status === "IN_PROGRESS" && (
+          {room.phase_ends_at && room.status === "IN_PROGRESS" && phase !== "DAY_CONCLUSION" && (
             <p className="display text-2xl leading-none font-bold">{secondsLeft}s</p>
           )}
         </div>
@@ -138,11 +141,8 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
 
       {room.status === "LOBBY" && (
         <section className="panel mt-5 p-4">
-          <h2 className="display text-sm font-bold tracking-widest uppercase">Lobby</h2>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Share code <span className="display tracking-[0.3em] text-foreground">{code}</span>. Needs
-            6-15 ready players.
-          </p>
+          <h2 className="display text-sm font-bold tracking-widest uppercase">{t("lobby.title")}</h2>
+          <p className="mt-1 text-xs text-muted-foreground">{t("lobby.share", { code })}</p>
           <div className="mt-4">
             <PlayerGrid players={players} meId={me.user_id} showReady />
           </div>
@@ -154,7 +154,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                 : "bg-primary text-primary-foreground"
             }`}
           >
-            {me.is_ready ? "Cancel ready" : "I'm ready"}
+            {me.is_ready ? t("lobby.cancelReady") : t("lobby.ready")}
           </button>
           {me.is_host && (
             <button
@@ -162,8 +162,32 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
               disabled={players.length < 6 || players.some((p) => !p.is_ready)}
               className="display mt-2 w-full rounded-md border border-primary px-4 py-3 text-sm font-bold tracking-widest text-primary uppercase disabled:opacity-40"
             >
-              Start game
+              {t("lobby.start")}
             </button>
+          )}
+          {me.is_host && (
+            <div className="mt-4 rounded-md border border-border p-3">
+              <p className="display text-[11px] font-bold tracking-widest uppercase">
+                {t("lobby.bots", { n: players.filter((p) => p.is_bot).length })}
+              </p>
+              <p className="mt-1 text-[11px] text-muted-foreground">{t("lobby.botsHint")}</p>
+              <div className="mt-2 flex gap-2">
+                <button
+                  onClick={() => void run(() => api.addBots(roomId, 1))}
+                  disabled={players.length >= 15}
+                  className="display flex-1 rounded-md border border-primary px-3 py-2 text-[11px] font-bold tracking-widest text-primary uppercase disabled:opacity-40"
+                >
+                  {t("lobby.addBot")}
+                </button>
+                <button
+                  onClick={() => void run(() => api.removeBots(roomId, 1))}
+                  disabled={!players.some((p) => p.is_bot)}
+                  className="display flex-1 rounded-md border border-border px-3 py-2 text-[11px] font-bold tracking-widest text-muted-foreground uppercase disabled:opacity-40"
+                >
+                  {t("lobby.removeBot")}
+                </button>
+              </div>
+            </div>
           )}
         </section>
       )}
@@ -171,14 +195,14 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
       {room.status === "FINISHED" && (
         <section className="panel mt-5 p-4 text-center">
           <h2 className="display text-2xl font-bold uppercase">
-            {room.winner === "WOLVES" ? "The wolves win" : "The town wins"}
+            {room.winner === "WOLVES" ? t("room.wolvesWin") : t("room.townWin")}
           </h2>
-          <p className="mt-1 text-xs text-muted-foreground">All cards are revealed below.</p>
+          <p className="mt-1 text-xs text-muted-foreground">{t("room.revealed")}</p>
           <div className="mt-4">
             <PlayerGrid players={players} meId={me.user_id} />
           </div>
           <Link to="/" className="display mt-4 inline-block text-xs tracking-widest underline uppercase">
-            Back home
+            {t("room.back")}
           </Link>
         </section>
       )}
@@ -188,15 +212,17 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
           {phase === "ROLE_DISTRIBUTION" && (
             <section className="panel mt-5 p-4 text-center">
               <p className="text-sm text-muted-foreground">
-                Waiting for everyone to confirm their card (
-                {players.filter((p) => p.card_seen).length}/{players.length}).
+                {t("room.waitingCards", {
+                  n: players.filter((p) => p.card_seen).length,
+                  total: players.length,
+                })}
               </p>
               {me.card_seen && (
                 <button
                   onClick={() => setCardOpen(true)}
                   className="display mt-3 text-xs tracking-widest text-primary underline uppercase"
                 >
-                  Show my card again
+                  {t("room.showAgain")}
                 </button>
               )}
             </section>
@@ -204,14 +230,14 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
 
           <section className="panel mt-5 p-4">
             <div className="flex items-center justify-between">
-              <h2 className="display text-sm font-bold tracking-widest uppercase">The table</h2>
+              <h2 className="display text-sm font-bold tracking-widest uppercase">{t("room.table")}</h2>
               {myRole && (
                 <button
                   onClick={() => setCardOpen(true)}
                   className="display text-[10px] tracking-widest uppercase"
                   style={{ color: ROLES[myRole].tone }}
                 >
-                  You are {ROLES[myRole].label}
+                  {t("room.youAre", { role: t(`role.${myRole}.label`) })}
                 </button>
               )}
             </div>
@@ -226,14 +252,34 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                 onSelect={(id) => void run(() => performAction(roomId, phase, id))}
               />
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">{instructions(phase, myRole, me, isSpeaker)}</p>
+            <p className="mt-3 text-xs text-muted-foreground">{instructions(t, phase, myRole, me, isSpeaker)}</p>
             {phase === "DAY_DISCUSSION" && isSpeaker && me.is_alive && (
               <button
                 onClick={() => void run(() => api.passTurn(roomId))}
                 className="display mt-3 w-full rounded-md border border-primary px-4 py-2.5 text-xs font-bold tracking-widest text-primary uppercase"
               >
-                Pass my turn
+                {t("room.pass")}
               </button>
+            )}
+            {phase === "DAY_CONCLUSION" && me.is_alive && (
+              <>
+                <button
+                  onClick={() => void run(() => api.readyToVote(roomId, !me.wants_vote))}
+                  className={`display mt-3 w-full rounded-md px-4 py-2.5 text-xs font-bold tracking-widest uppercase ${
+                    me.wants_vote
+                      ? "border border-border text-muted-foreground"
+                      : "bg-primary text-primary-foreground"
+                  }`}
+                >
+                  {me.wants_vote ? t("room.cancelReadyVote") : t("room.readyVote")}
+                </button>
+                <p className="mt-2 text-center text-[11px] text-muted-foreground">
+                  {t("room.readyVoteCount", {
+                    n: state.wants_vote_count,
+                    total: state.living_count,
+                  })}
+                </p>
+              </>
             )}
           </section>
 
@@ -241,9 +287,9 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             <div className="flex gap-1">
               {(
                 [
-                  ["GLOBAL", "Village"],
-                  ...(myRole === "WOLF" ? [["WOLF_PRIVATE", "Pack"] as const] : []),
-                  ...(myRole === "DETECTIVE" ? [["DETECTIVE_PRIVATE", "Operator"] as const] : []),
+                  ["GLOBAL", t("chat.village")],
+                  ...(myRole === "WOLF" ? [["WOLF_PRIVATE", t("chat.pack")] as const] : []),
+                  ...(myRole === "DETECTIVE" ? [["DETECTIVE_PRIVATE", t("chat.operator")] as const] : []),
                 ] as [typeof tab, string][]
               ).map(([key, label]) => (
                 <button
@@ -266,7 +312,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                 anonymous={tab === "WOLF_PRIVATE"}
                 canWrite={me.is_alive && canWrite(tab, phase, isSpeaker)}
                 allowVoice={tab === "GLOBAL" && phase === "DAY_DISCUSSION" && isSpeaker}
-                placeholder={tab === "WOLF_PRIVATE" ? "Anonymous pack chat…" : "Say something…"}
+                placeholder={tab === "WOLF_PRIVATE" ? t("chat.packPlaceholder") : t("chat.placeholder")}
                 onSent={refresh}
               />
             </div>
@@ -277,20 +323,20 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
       {actionError && <p className="mt-3 text-center text-sm text-destructive">{actionError}</p>}
 
       <footer className="mt-6 flex justify-between text-[11px] text-muted-foreground">
-        <Link to="/">Home</Link>
-        <button onClick={() => void supabase.auth.signOut()}>Sign out</button>
+        <Link to="/">{t("nav.home")}</Link>
+        <button onClick={() => void supabase.auth.signOut()}>{t("nav.signOut")}</button>
       </footer>
 
       {showRoleModal && myRole && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 px-6 py-8">
           <p className="display text-xs tracking-widest text-muted-foreground uppercase">
-            Your secret card
+            {t("room.myCard")}
           </p>
           <div className="mt-3 w-56">
             <GameCard role={myRole} />
           </div>
           <p className="mt-4 max-w-xs text-center text-sm text-muted-foreground">
-            {ROLES[myRole].blurb}
+            {t(`role.${myRole}.blurb`)}
           </p>
           <button
             onClick={() => {
@@ -299,7 +345,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             }}
             className="display mt-5 rounded-md bg-primary px-6 py-3 text-sm font-bold tracking-widest text-primary-foreground uppercase"
           >
-            {me.card_seen ? "Close" : "I've seen my card"}
+            {me.card_seen ? t("room.close") : t("room.seenCard")}
           </button>
         </div>
       )}
@@ -347,39 +393,37 @@ function canWrite(
   if (channel === "WOLF_PRIVATE") return phase === "NIGHT_WOLVES";
   if (channel === "DETECTIVE_PRIVATE") return true;
   if (phase === "DAY_DISCUSSION") return isSpeaker;
+  if (phase === "DAY_CONCLUSION") return true;
   return phase === "DAY_VOTING";
 }
 
 function instructions(
+  t: TFunc,
   phase: string | null,
   role: RoleKey | null,
   me: { is_alive: boolean; self_heal_used: boolean },
   isSpeaker: boolean,
 ) {
-  if (!me.is_alive) return "You are dead. You can watch and read, but not speak or vote.";
+  if (!me.is_alive) return t("instr.dead");
   switch (phase) {
     case "NIGHT_WOLVES":
-      return role === "WOLF"
-        ? "Pick your target — the pack chat is anonymous. The last locked pick counts."
-        : "The village sleeps. The wolves are choosing.";
+      return role === "WOLF" ? t("instr.wolf") : t("instr.sleepWolves");
     case "NIGHT_DETECTIVE":
-      return role === "DETECTIVE"
-        ? "Pick one player. The operator answers Yes or No privately."
-        : "The village sleeps. The detective is investigating.";
+      return role === "DETECTIVE" ? t("instr.detective") : t("instr.sleepDetective");
     case "NIGHT_DOCTOR":
       return role === "DOCTOR"
         ? me.self_heal_used
-          ? "Heal any living player. Your self-heal is already used."
-          : "Heal any living player — you may pick yourself once per game."
-        : "The village sleeps. The doctor is choosing.";
+          ? t("instr.doctorUsed")
+          : t("instr.doctor")
+        : t("instr.sleepDoctor");
     case "NIGHT_RESULT":
-      return "The operator is announcing the night.";
+      return t("instr.result");
     case "DAY_DISCUSSION":
-      return isSpeaker
-        ? "It's your minute: type, record a voice note, or pass."
-        : "Listen. You'll get your own minute to accuse or defend.";
+      return isSpeaker ? t("instr.speaker") : t("instr.listen");
+    case "DAY_CONCLUSION":
+      return t("instr.conclusion");
     case "DAY_VOTING":
-      return "Tap a player to vote. You can change your vote until time runs out.";
+      return t("instr.voting");
     default:
       return "";
   }
