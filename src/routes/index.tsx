@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useSession";
@@ -146,16 +146,27 @@ function Index() {
             disabled={busy || code.trim().length < 4}
             className="display rounded-md border border-primary px-4 text-xs font-bold tracking-widest text-primary uppercase disabled:opacity-40"
           >
-            Join
+            {t("home.joinCta")}
           </button>
         </div>
       </div>
 
       {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
 
+      <div className="panel mt-4 p-5">
+        <h2 className="display text-sm font-bold tracking-widest uppercase">{t("home.offline")}</h2>
+        <p className="mt-1 text-xs text-muted-foreground">{t("home.offlineHint")}</p>
+        <Link
+          to="/offline"
+          className="display mt-4 block rounded-md border border-primary px-4 py-3 text-center text-sm font-bold tracking-widest text-primary uppercase"
+        >
+          {t("home.offlinePlay")}
+        </Link>
+      </div>
+
       <section className="mt-8">
         <p className="display text-[11px] tracking-widest text-muted-foreground uppercase">
-          The four cards
+          {t("home.fourCards")}
         </p>
         <div className="mt-3 grid grid-cols-4 gap-2">
           {(Object.keys(ROLES) as RoleKey[]).map((r) => (
