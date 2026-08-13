@@ -8,6 +8,7 @@ export type Phase =
   | "NIGHT_DOCTOR"
   | "NIGHT_RESULT"
   | "DAY_DISCUSSION"
+  | "DAY_CONCLUSION"
   | "DAY_VOTING";
 
 export type Player = {
@@ -18,6 +19,8 @@ export type Player = {
   is_alive: boolean;
   card_seen: boolean;
   is_host: boolean;
+  is_bot: boolean;
+  wants_vote: boolean;
   role: RoleKey | null;
 };
 
@@ -34,6 +37,8 @@ export type RoomState = {
     winner: string | null;
   };
   speaker_id: string | null;
+  living_count: number;
+  wants_vote_count: number;
   me: {
     user_id: string;
     role: RoleKey | null;
@@ -41,6 +46,7 @@ export type RoomState = {
     is_ready: boolean;
     card_seen: boolean;
     self_heal_used: boolean;
+    wants_vote: boolean;
     is_host: boolean;
   };
   night: {
@@ -103,6 +109,18 @@ export const api = {
   async passTurn(roomId: string) {
     unwrap(await supabase.rpc("pass_turn", { p_room_id: roomId }));
   },
+  async addBots(roomId: string, count: number) {
+    unwrap(await supabase.rpc("add_bots", { p_room_id: roomId, p_count: count }));
+  },
+  async removeBots(roomId: string, count: number) {
+    unwrap(await supabase.rpc("remove_bots", { p_room_id: roomId, p_count: count }));
+  },
+  async readyToVote(roomId: string, ready: boolean) {
+    unwrap(await supabase.rpc("ready_to_vote", { p_room_id: roomId, p_ready: ready }));
+  },
+  async runBots(roomId: string) {
+    await supabase.rpc("run_bots", { p_room_id: roomId });
+  },
   async tick(roomId: string) {
     await supabase.rpc("tick_room", { p_room_id: roomId });
   },
@@ -157,25 +175,8 @@ export const AVATARS = [
   "vera",
 ].map((seed) => `https://api.dicebear.com/9.x/notionists-neutral/svg?seed=${seed}&backgroundColor=1f1f22`);
 
-export function phaseLabel(phase: Phase | null, status: string) {
-  if (status === "LOBBY") return "Lobby";
-  if (status === "FINISHED") return "Game over";
-  switch (phase) {
-    case "ROLE_DISTRIBUTION":
-      return "Role distribution";
-    case "NIGHT_WOLVES":
-      return "Night — the wolves hunt";
-    case "NIGHT_DETECTIVE":
-      return "Night — the detective investigates";
-    case "NIGHT_DOCTOR":
-      return "Night — the doctor heals";
-    case "NIGHT_RESULT":
-      return "Dawn — the operator speaks";
-    case "DAY_DISCUSSION":
-      return "Day — analysis & defense";
-    case "DAY_VOTING":
-      return "Day — voting";
-    default:
-      return "";
-  }
+export function phaseKey(phase: Phase | null, status: string) {
+  if (status === "LOBBY") return "phase.LOBBY";
+  if (status === "FINISHED") return "phase.FINISHED";
+  return phase ? `phase.${phase}` : "phase.LOBBY";
 }

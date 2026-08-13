@@ -42,6 +42,17 @@ export function useRoom(roomId: string | null) {
     };
   }, [roomId, refresh]);
 
+  // bot engine: any watcher nudges the server so bots act
+  useEffect(() => {
+    if (!roomId) return;
+    if (state?.room.status !== "IN_PROGRESS") return;
+    if (!state.players.some((p) => p.is_bot && p.is_alive)) return;
+    const id = setInterval(() => {
+      void api.runBots(roomId);
+    }, 2500);
+    return () => clearInterval(id);
+  }, [roomId, state?.room.status, state?.room.current_phase, state?.players]);
+
   // timer engine: whoever is watching nudges the server when a phase expires
   useEffect(() => {
     if (!roomId) return;
