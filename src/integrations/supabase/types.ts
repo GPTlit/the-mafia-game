@@ -116,37 +116,49 @@ export type Database = {
       }
       room_players: {
         Row: {
+          bot_avatar: string | null
+          bot_name: string | null
           card_seen: boolean
           created_at: string
           id: string
           is_alive: boolean
+          is_bot: boolean
           is_ready: boolean
           role: Database["public"]["Enums"]["player_role"] | null
           room_id: string
           self_heal_used: boolean
           user_id: string
+          wants_vote: boolean
         }
         Insert: {
+          bot_avatar?: string | null
+          bot_name?: string | null
           card_seen?: boolean
           created_at?: string
           id?: string
           is_alive?: boolean
+          is_bot?: boolean
           is_ready?: boolean
           role?: Database["public"]["Enums"]["player_role"] | null
           room_id: string
           self_heal_used?: boolean
           user_id: string
+          wants_vote?: boolean
         }
         Update: {
+          bot_avatar?: string | null
+          bot_name?: string | null
           card_seen?: boolean
           created_at?: string
           id?: string
           is_alive?: boolean
+          is_bot?: boolean
           is_ready?: boolean
           role?: Database["public"]["Enums"]["player_role"] | null
           room_id?: string
           self_heal_used?: boolean
           user_id?: string
+          wants_vote?: boolean
         }
         Relationships: [
           {
@@ -237,6 +249,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_bots: {
+        Args: { p_count: number; p_room_id: string }
+        Returns: undefined
+      }
       begin_night: {
         Args: { p_room_id: string; p_round: number }
         Returns: undefined
@@ -264,7 +280,16 @@ export type Database = {
         Args: { p_room_id: string }
         Returns: Database["public"]["Enums"]["player_role"]
       }
+      open_voting: { Args: { p_room_id: string }; Returns: undefined }
       pass_turn: { Args: { p_room_id: string }; Returns: undefined }
+      ready_to_vote: {
+        Args: { p_ready: boolean; p_room_id: string }
+        Returns: undefined
+      }
+      remove_bots: {
+        Args: { p_count: number; p_room_id: string }
+        Returns: undefined
+      }
       resolve_night: { Args: { p_room_id: string }; Returns: undefined }
       resolve_votes: { Args: { p_room_id: string }; Returns: undefined }
       role_counts: {
@@ -277,6 +302,7 @@ export type Database = {
       }
       room_id_by_code: { Args: { p_code: string }; Returns: string }
       room_is_finished: { Args: { p_room_id: string }; Returns: boolean }
+      run_bots: { Args: { p_room_id: string }; Returns: undefined }
       set_ready: {
         Args: { p_ready: boolean; p_room_id: string }
         Returns: undefined
@@ -297,6 +323,7 @@ export type Database = {
         | "NIGHT_DOCTOR"
         | "NIGHT_RESULT"
         | "DAY_DISCUSSION"
+        | "DAY_CONCLUSION"
         | "DAY_VOTING"
       player_role: "WOLF" | "DOCTOR" | "DETECTIVE" | "CIVILIAN"
       room_status: "LOBBY" | "IN_PROGRESS" | "FINISHED"
@@ -435,6 +462,7 @@ export const Constants = {
         "NIGHT_DOCTOR",
         "NIGHT_RESULT",
         "DAY_DISCUSSION",
+        "DAY_CONCLUSION",
         "DAY_VOTING",
       ],
       player_role: ["WOLF", "DOCTOR", "DETECTIVE", "CIVILIAN"],
