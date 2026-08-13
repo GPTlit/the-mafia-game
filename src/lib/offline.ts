@@ -66,7 +66,7 @@ const shuffle = <T,>(a: T[]) => a.map((v) => [Math.random(), v] as const).sort((
 const pick = <T,>(a: T[]): T | undefined => a[Math.floor(Math.random() * a.length)];
 
 function say(s: OfflineState, sender: string | null, key: string, vars?: Record<string, string | number>) {
-  s.messages.push({ id: uid(), sender_id: sender, key, vars, channel: "GLOBAL" });
+  s.messages.push({ id: uid(), sender_id: sender, key, ...(vars ? { vars } : {}), channel: "GLOBAL" });
 }
 
 export function createOfflineGame(total: number, myName: string): OfflineState {
