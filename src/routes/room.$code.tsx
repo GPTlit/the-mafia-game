@@ -8,6 +8,8 @@ import { LanguageSwitcher, useI18n, type TFunc } from "@/lib/i18n";
 import { GameCard, ROLES, WolfSigil, type RoleKey } from "@/lib/roles";
 import { PlayerGrid } from "@/components/PlayerGrid";
 import { Chat } from "@/components/Chat";
+import { ThemeToggle } from "@/lib/theme";
+import { useVoiceCall } from "@/lib/useVoiceCall";
 
 export const Route = createFileRoute("/room/$code")({
   head: () => ({
@@ -73,6 +75,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
   const [actionError, setActionError] = useState<string | null>(null);
   const [cardOpen, setCardOpen] = useState(true);
   const [tab, setTab] = useState<"GLOBAL" | "WOLF_PRIVATE" | "DETECTIVE_PRIVATE">("GLOBAL");
+  const call = useVoiceCall(roomId, state?.me.user_id ?? null);
 
   const run = async (fn: () => Promise<unknown>) => {
     setActionError(null);
@@ -129,7 +132,10 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
           </div>
         </div>
         <div className="text-end">
-          <LanguageSwitcher className="justify-end" />
+          <div className="flex items-center justify-end gap-2">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
           <p className="display text-xs tracking-widest text-primary uppercase">
             {t(phaseKey(phase, room.status))}
           </p>
@@ -210,7 +216,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
       {room.status === "IN_PROGRESS" && (
         <>
           {phase === "ROLE_DISTRIBUTION" && (
-            <section className="panel mt-5 p-4 text-center">
+            <section className="panel mt-4 p-3 text-center">
               <p className="text-sm text-muted-foreground">
                 {t("room.waitingCards", {
                   n: players.filter((p) => p.card_seen).length,
@@ -228,63 +234,32 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             </section>
           )}
 
-          <section className="panel mt-5 p-4">
+          <section className="mt-3">
             <div className="flex items-center justify-between">
-              <h2 className="display text-sm font-bold tracking-widest uppercase">{t("room.table")}</h2>
+              <p className="text-[11px] text-muted-foreground">{instructions(t, phase, myRole, me, isSpeaker)}</p>
               {myRole && (
                 <button
                   onClick={() => setCardOpen(true)}
-                  className="display text-[10px] tracking-widest uppercase"
+                  className="display shrink-0 ps-2 text-[10px] tracking-widest uppercase"
                   style={{ color: ROLES[myRole].tone }}
                 >
                   {t("room.youAre", { role: t(`role.${myRole}.label`) })}
                 </button>
               )}
             </div>
-            <div className="mt-3">
+            <div className="mt-2">
               <PlayerGrid
+                compact
                 players={players}
                 meId={me.user_id}
                 speakerId={phase === "DAY_DISCUSSION" ? speaker_id : null}
                 voteCounts={phase === "DAY_VOTING" ? voteCounts : {}}
-                selectable={selectablePhase(phase, myRole, me.is_alive)}
-                selectedId={selectedTarget(phase, night, myVote)}
-                onSelect={(id) => void run(() => performAction(roomId, phase, id))}
               />
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">{instructions(t, phase, myRole, me, isSpeaker)}</p>
-            {phase === "DAY_DISCUSSION" && isSpeaker && me.is_alive && (
-              <button
-                onClick={() => void run(() => api.passTurn(roomId))}
-                className="display mt-3 w-full rounded-md border border-primary px-4 py-2.5 text-xs font-bold tracking-widest text-primary uppercase"
-              >
-                {t("room.pass")}
-              </button>
-            )}
-            {phase === "DAY_CONCLUSION" && me.is_alive && (
-              <>
-                <button
-                  onClick={() => void run(() => api.readyToVote(roomId, !me.wants_vote))}
-                  className={`display mt-3 w-full rounded-md px-4 py-2.5 text-xs font-bold tracking-widest uppercase ${
-                    me.wants_vote
-                      ? "border border-border text-muted-foreground"
-                      : "bg-primary text-primary-foreground"
-                  }`}
-                >
-                  {me.wants_vote ? t("room.cancelReadyVote") : t("room.readyVote")}
-                </button>
-                <p className="mt-2 text-center text-[11px] text-muted-foreground">
-                  {t("room.readyVoteCount", {
-                    n: state.wants_vote_count,
-                    total: state.living_count,
-                  })}
-                </p>
-              </>
-            )}
           </section>
 
-          <section className="panel mt-4 flex min-h-[22rem] flex-1 flex-col p-4">
-            <div className="flex gap-1">
+          <section className="panel mt-3 flex min-h-[24rem] flex-1 flex-col p-3">
+            <div className="flex items-center gap-1">
               {(
                 [
                   ["GLOBAL", t("chat.village")],
@@ -295,25 +270,94 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                 <button
                   key={key}
                   onClick={() => setTab(key)}
-                  className={`display rounded-md px-3 py-1.5 text-[11px] font-bold tracking-widest uppercase ${
+                  className={`display rounded-full px-3 py-1.5 text-[11px] font-bold tracking-widest uppercase ${
                     tab === key ? "bg-primary text-primary-foreground" : "text-muted-foreground"
                   }`}
                 >
                   {label}
                 </button>
               ))}
+              <div className="ms-auto flex items-center gap-1">
+                {call.inCall && (
+                  <button
+                    onClick={call.toggleMute}
+                    className={`rounded-full border px-2 py-1 text-[10px] font-bold uppercase ${
+                      call.muted ? "border-border text-muted-foreground" : "border-primary text-primary"
+                    }`}
+                  >
+                    {call.muted ? t("call.unmute") : t("call.mute")}
+                  </button>
+                )}
+                <button
+                  onClick={() => (call.inCall ? call.leave() : void call.join())}
+                  className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${
+                    call.inCall
+                      ? "bg-destructive text-destructive-foreground"
+                      : "bg-primary text-primary-foreground"
+                  }`}
+                >
+                  {call.inCall ? t("call.live", { n: call.peerCount + 1 }) : t("call.join")}
+                </button>
+              </div>
             </div>
+            {call.error === "mic" && (
+              <p className="mt-1 text-[10px] text-destructive">{t("call.micDenied")}</p>
+            )}
             <div className="mt-3 flex min-h-0 flex-1 flex-col">
               <Chat
                 roomId={roomId}
                 channel={tab}
                 messages={messages}
                 players={players}
+                meId={me.user_id}
                 anonymous={tab === "WOLF_PRIVATE"}
-                canWrite={me.is_alive && canWrite(tab, phase, isSpeaker)}
-                allowVoice={tab === "GLOBAL" && phase === "DAY_DISCUSSION" && isSpeaker}
+                canWrite={me.is_alive}
                 placeholder={tab === "WOLF_PRIVATE" ? t("chat.packPlaceholder") : t("chat.placeholder")}
                 onSent={refresh}
+                actionSlot={
+                  <ActionSlot
+                    t={t}
+                    phase={phase}
+                    players={players}
+                    meId={me.user_id}
+                    selectable={selectablePhase(phase, myRole, me.is_alive)}
+                    selectedId={selectedTarget(phase, night, myVote)}
+                    voteCounts={phase === "DAY_VOTING" ? voteCounts : {}}
+                    onSelect={(id) => void run(() => performAction(roomId, phase, id))}
+                    extra={
+                      <>
+                        {phase === "DAY_DISCUSSION" && isSpeaker && me.is_alive && (
+                          <button
+                            onClick={() => void run(() => api.passTurn(roomId))}
+                            className="display w-full rounded-full border border-primary px-4 py-2 text-[11px] font-bold tracking-widest text-primary uppercase"
+                          >
+                            {t("room.pass")}
+                          </button>
+                        )}
+                        {phase === "DAY_CONCLUSION" && me.is_alive && (
+                          <>
+                            <button
+                              onClick={() => void run(() => api.readyToVote(roomId, !me.wants_vote))}
+                              className={`display w-full rounded-full px-4 py-2 text-[11px] font-bold tracking-widest uppercase ${
+                                me.wants_vote
+                                  ? "border border-border text-muted-foreground"
+                                  : "bg-primary text-primary-foreground"
+                              }`}
+                            >
+                              {me.wants_vote ? t("room.cancelReadyVote") : t("room.readyVote")}
+                            </button>
+                            <p className="mt-1 text-center text-[10px] text-muted-foreground">
+                              {t("room.readyVoteCount", {
+                                n: state.wants_vote_count,
+                                total: state.living_count,
+                              })}
+                            </p>
+                          </>
+                        )}
+                      </>
+                    }
+                  />
+                }
               />
             </div>
           </section>
