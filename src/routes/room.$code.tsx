@@ -397,6 +397,61 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
   );
 }
 
+function ActionSlot({
+  t,
+  phase,
+  players,
+  meId,
+  selectable,
+  selectedId,
+  voteCounts,
+  onSelect,
+  extra,
+}: {
+  t: TFunc;
+  phase: string | null;
+  players: Player[];
+  meId: string;
+  selectable: boolean;
+  selectedId: string | null;
+  voteCounts: Record<string, number>;
+  onSelect: (id: string) => void;
+  extra: React.ReactNode;
+}) {
+  const prompt =
+    phase === "NIGHT_WOLVES"
+      ? t("action.kill")
+      : phase === "NIGHT_DETECTIVE"
+        ? t("action.check")
+        : phase === "NIGHT_DOCTOR"
+          ? t("action.heal")
+          : phase === "DAY_VOTING"
+            ? t("action.vote")
+            : null;
+
+  if (!selectable && !extra) return null;
+
+  return (
+    <div className="mt-2 space-y-2 rounded-2xl border border-border bg-card/70 p-2">
+      {selectable && prompt && (
+        <>
+          <p className="display px-1 text-[10px] font-bold tracking-widest text-primary uppercase">{prompt}</p>
+          <PlayerGrid
+            compact
+            players={players.filter((p) => p.is_alive)}
+            meId={meId}
+            selectable
+            selectedId={selectedId}
+            voteCounts={voteCounts}
+            onSelect={onSelect}
+          />
+        </>
+      )}
+      {extra}
+    </div>
+  );
+}
+
 function selectablePhase(
   phase: ReturnType<typeof String> | null,
   role: RoleKey | null,
