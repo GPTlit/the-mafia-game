@@ -418,6 +418,18 @@ const ar: Dict = {
   "op.isWolf": "هل {name} ذئب؟",
   "op.yes": "نعم",
   "op.no": "لا",
+  "call.join": "انضم للمكالمة",
+  "call.leave": "اخرج من المكالمة",
+  "call.mute": "كتم",
+  "call.unmute": "إلغاء الكتم",
+  "call.live": "مباشر · {n}",
+  "call.micDenied": "تم رفض إذن الميكروفون.",
+  "action.kill": "اختر من يقتله القطيع",
+  "action.check": "اختر من تحقق عنه",
+  "action.heal": "اختر من تعالجه",
+  "action.vote": "اختر من تصوّت عليه",
+  "action.picked": "اخترت: {name}",
+  "action.change": "تغيير",
 };
 
 const DICTS: Record<Lang, Dict> = { en, fr, ar };

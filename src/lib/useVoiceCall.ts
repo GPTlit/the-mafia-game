@@ -61,7 +61,7 @@ export function useVoiceCall(roomId: string | null, selfId: string | null) {
           document.body.appendChild(el);
           audios.current.set(id, el);
         }
-        el.srcObject = e.streams[0];
+        el.srcObject = e.streams[0] ?? null;
         void el.play().catch(() => {});
         setPeers((p) => (p.includes(id) ? p : [...p, id]));
       };

@@ -28,7 +28,7 @@ export function VoiceNote({ path, mine = false }: { path: string; mine?: boolean
   }, [path]);
 
   useEffect(() => {
-    if (audio.current) audio.current.playbackRate = SPEEDS[speedIdx];
+    if (audio.current) audio.current.playbackRate = (SPEEDS[speedIdx] ?? 1);
   }, [speedIdx, url]);
 
   const pct = duration > 0 ? Math.min(100, (time / duration) * 100) : 0;
@@ -38,7 +38,7 @@ export function VoiceNote({ path, mine = false }: { path: string; mine?: boolean
     const el = audio.current;
     if (!el) return;
     if (el.paused) {
-      el.playbackRate = SPEEDS[speedIdx];
+      el.playbackRate = (SPEEDS[speedIdx] ?? 1);
       void el.play();
     } else {
       el.pause();
@@ -102,7 +102,7 @@ export function VoiceNote({ path, mine = false }: { path: string; mine?: boolean
           mine ? "border-primary-foreground/40 text-primary-foreground" : "border-border text-muted-foreground"
         }`}
       >
-        {SPEEDS[speedIdx]}x
+        {(SPEEDS[speedIdx] ?? 1)}x
       </button>
 
       {url && (
