@@ -136,6 +136,18 @@ const en: Dict = {
   "op.isWolf": "Is {name} a wolf?",
   "op.yes": "Yes",
   "op.no": "No",
+  "call.join": "Join voice",
+  "call.leave": "Leave voice",
+  "call.mute": "Mute",
+  "call.unmute": "Unmute",
+  "call.live": "Live · {n}",
+  "call.micDenied": "Microphone permission denied.",
+  "action.kill": "Choose who the pack kills",
+  "action.check": "Choose who to investigate",
+  "action.heal": "Choose who to heal",
+  "action.vote": "Choose who to vote out",
+  "action.picked": "Locked: {name}",
+  "action.change": "Change",
 };
 
 const fr: Dict = {
@@ -265,6 +277,18 @@ const fr: Dict = {
   "op.isWolf": "Est-ce que {name} est un loup ?",
   "op.yes": "Oui",
   "op.no": "Non",
+  "call.join": "Rejoindre l'appel",
+  "call.leave": "Quitter l'appel",
+  "call.mute": "Couper le micro",
+  "call.unmute": "Activer le micro",
+  "call.live": "En direct · {n}",
+  "call.micDenied": "Permission du micro refusée.",
+  "action.kill": "Choisis la cible de la meute",
+  "action.check": "Choisis qui enquêter",
+  "action.heal": "Choisis qui soigner",
+  "action.vote": "Choisis qui éliminer",
+  "action.picked": "Choix : {name}",
+  "action.change": "Changer",
 };
 
 const ar: Dict = {
