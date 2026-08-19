@@ -54,7 +54,13 @@ export function roleLabel(t: TFunc, role: RoleKey) {
   return t(`role.${role}.label`);
 }
 
-export function WolfSigil({ className, style }: { className?: string; style?: React.CSSProperties }) {
+export function WolfSigil({
+  className,
+  style,
+}: {
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   return (
     <svg
       viewBox="0 0 100 90"
@@ -93,10 +99,11 @@ export function GameCard({
         loading="lazy"
       />
       {!compact && (
-        <figcaption
-          className="absolute inset-x-0 bottom-0 bg-background/80 px-2 py-1.5 text-center backdrop-blur-sm"
-        >
-          <p className="display text-[11px] font-bold tracking-[0.25em]" style={{ color: meta.tone }}>
+        <figcaption className="absolute inset-x-0 bottom-0 bg-background/80 px-2 py-1.5 text-center backdrop-blur-sm">
+          <p
+            className="display text-[11px] font-bold tracking-[0.25em]"
+            style={{ color: meta.tone }}
+          >
             {t(`role.${role}.label`)}
           </p>
           <p className="display text-[9px] tracking-widest text-muted-foreground uppercase">

@@ -22,7 +22,8 @@ const en: Dict = {
   "home.code": "ROOM CODE",
   "home.joinCta": "Join",
   "home.offline": "Offline mode",
-  "home.offlineHint": "Play alone against bots that think for themselves. No internet table needed.",
+  "home.offlineHint":
+    "Play alone against bots that think for themselves. No internet table needed.",
   "home.offlinePlay": "Play vs bots",
   "home.fourCards": "The four cards",
   "lobby.title": "Lobby",
@@ -157,7 +158,8 @@ const fr: Dict = {
   "nav.home": "Accueil",
   "home.welcome": "Bon retour{name}. Réunis 6 à 15 joueurs.",
   "home.host": "Créer une partie",
-  "home.hostHint": "Tu reçois un code de salle à partager. Tu peux remplir les places vides avec des bots.",
+  "home.hostHint":
+    "Tu reçois un code de salle à partager. Tu peux remplir les places vides avec des bots.",
   "home.create": "Créer la salle",
   "home.join": "Rejoindre une partie",
   "home.code": "CODE DE SALLE",

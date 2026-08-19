@@ -17,7 +17,8 @@ export const Route = createFileRoute("/room/$code")({
       { title: "Wolf Night Room — Play a Round" },
       {
         name: "description",
-        content: "Your Wolf Night table: roles, night actions, day defense and voting in real time.",
+        content:
+          "Your Wolf Night table: roles, night actions, day defense and voting in real time.",
       },
       { property: "og:title", content: "Wolf Night Room" },
       { property: "og:description", content: "Join the table and survive the night." },
@@ -62,7 +63,11 @@ function RoomPage() {
   }
 
   if (!roomId) {
-    return <main className="flex min-h-screen items-center justify-center text-muted-foreground">Entering room…</main>;
+    return (
+      <main className="flex min-h-screen items-center justify-center text-muted-foreground">
+        Entering room…
+      </main>
+    );
   }
 
   return <Room roomId={roomId} code={code} />;
@@ -103,7 +108,11 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
   }
 
   if (!state) {
-    return <main className="flex min-h-screen items-center justify-center text-muted-foreground">Loading table…</main>;
+    return (
+      <main className="flex min-h-screen items-center justify-center text-muted-foreground">
+        Loading table…
+      </main>
+    );
   }
 
   const { room, me, players, votes, night, speaker_id } = state;
@@ -116,7 +125,10 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
   const isSpeaker = speaker_id === me.user_id;
 
   const showRoleModal =
-    room.status === "IN_PROGRESS" && phase === "ROLE_DISTRIBUTION" && myRole && (cardOpen || !me.card_seen);
+    room.status === "IN_PROGRESS" &&
+    phase === "ROLE_DISTRIBUTION" &&
+    myRole &&
+    (cardOpen || !me.card_seen);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-lg flex-col px-4 py-5">
@@ -124,7 +136,9 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
         <div className="flex items-center gap-2">
           <WolfSigil className="h-6 w-8 text-primary" />
           <div>
-            <p className="display text-lg leading-none font-bold uppercase">{t("room.title", { code })}</p>
+            <p className="display text-lg leading-none font-bold uppercase">
+              {t("room.title", { code })}
+            </p>
             <p className="text-[11px] text-muted-foreground">
               {t("room.meta", { players: players.length, alive: living.length })}
               {room.round_number > 0 ? t("room.round", { n: room.round_number }) : ""}
@@ -147,7 +161,9 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
 
       {room.status === "LOBBY" && (
         <section className="panel mt-5 p-4">
-          <h2 className="display text-sm font-bold tracking-widest uppercase">{t("lobby.title")}</h2>
+          <h2 className="display text-sm font-bold tracking-widest uppercase">
+            {t("lobby.title")}
+          </h2>
           <p className="mt-1 text-xs text-muted-foreground">{t("lobby.share", { code })}</p>
           <div className="mt-4">
             <PlayerGrid players={players} meId={me.user_id} showReady />
@@ -207,7 +223,10 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
           <div className="mt-4">
             <PlayerGrid players={players} meId={me.user_id} />
           </div>
-          <Link to="/" className="display mt-4 inline-block text-xs tracking-widest underline uppercase">
+          <Link
+            to="/"
+            className="display mt-4 inline-block text-xs tracking-widest underline uppercase"
+          >
             {t("room.back")}
           </Link>
         </section>
@@ -236,7 +255,9 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
 
           <section className="mt-3">
             <div className="flex items-center justify-between">
-              <p className="text-[11px] text-muted-foreground">{instructions(t, phase, myRole, me, isSpeaker)}</p>
+              <p className="text-[11px] text-muted-foreground">
+                {instructions(t, phase, myRole, me, isSpeaker)}
+              </p>
               {myRole && (
                 <button
                   onClick={() => setCardOpen(true)}
@@ -264,7 +285,9 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                 [
                   ["GLOBAL", t("chat.village")],
                   ...(myRole === "WOLF" ? [["WOLF_PRIVATE", t("chat.pack")] as const] : []),
-                  ...(myRole === "DETECTIVE" ? [["DETECTIVE_PRIVATE", t("chat.operator")] as const] : []),
+                  ...(myRole === "DETECTIVE"
+                    ? [["DETECTIVE_PRIVATE", t("chat.operator")] as const]
+                    : []),
                 ] as [typeof tab, string][]
               ).map(([key, label]) => (
                 <button
@@ -282,7 +305,9 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                   <button
                     onClick={call.toggleMute}
                     className={`rounded-full border px-2 py-1 text-[10px] font-bold uppercase ${
-                      call.muted ? "border-border text-muted-foreground" : "border-primary text-primary"
+                      call.muted
+                        ? "border-border text-muted-foreground"
+                        : "border-primary text-primary"
                     }`}
                   >
                     {call.muted ? t("call.unmute") : t("call.mute")}
@@ -312,7 +337,9 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                 meId={me.user_id}
                 anonymous={tab === "WOLF_PRIVATE"}
                 canWrite={me.is_alive}
-                placeholder={tab === "WOLF_PRIVATE" ? t("chat.packPlaceholder") : t("chat.placeholder")}
+                placeholder={
+                  tab === "WOLF_PRIVATE" ? t("chat.packPlaceholder") : t("chat.placeholder")
+                }
                 onSent={refresh}
                 actionSlot={
                   <ActionSlot
@@ -337,7 +364,9 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                         {phase === "DAY_CONCLUSION" && me.is_alive && (
                           <>
                             <button
-                              onClick={() => void run(() => api.readyToVote(roomId, !me.wants_vote))}
+                              onClick={() =>
+                                void run(() => api.readyToVote(roomId, !me.wants_vote))
+                              }
                               className={`display w-full rounded-full px-4 py-2 text-[11px] font-bold tracking-widest uppercase ${
                                 me.wants_vote
                                   ? "border border-border text-muted-foreground"
@@ -435,7 +464,9 @@ function ActionSlot({
     <div className="mt-2 space-y-2 rounded-2xl border border-border bg-card/70 p-2">
       {selectable && prompt && (
         <>
-          <p className="display px-1 text-[10px] font-bold tracking-widest text-primary uppercase">{prompt}</p>
+          <p className="display px-1 text-[10px] font-bold tracking-widest text-primary uppercase">
+            {prompt}
+          </p>
           <PlayerGrid
             compact
             players={players.filter((p) => p.is_alive)}
@@ -467,7 +498,11 @@ function selectablePhase(
 
 function selectedTarget(
   phase: string | null,
-  night: { wolf_target: string | null; detective_target: string | null; doctor_target: string | null } | null,
+  night: {
+    wolf_target: string | null;
+    detective_target: string | null;
+    doctor_target: string | null;
+  } | null,
   myVote: string | null,
 ) {
   if (phase === "NIGHT_WOLVES") return night?.wolf_target ?? null;

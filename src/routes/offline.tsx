@@ -29,7 +29,10 @@ export const Route = createFileRoute("/offline")({
           "No table, no problem: play Wolf Night offline against bots that reason, investigate, heal and vote on their own.",
       },
       { property: "og:title", content: "Wolf Night — Offline vs Bots" },
-      { property: "og:description", content: "Solo social deduction against bots with their own minds." },
+      {
+        property: "og:description",
+        content: "Solo social deduction against bots with their own minds.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -143,7 +146,8 @@ function OfflinePage() {
   }));
 
   const voteCounts: Record<string, number> = {};
-  for (const target of Object.values(state.votes)) voteCounts[target] = (voteCounts[target] ?? 0) + 1;
+  for (const target of Object.values(state.votes))
+    voteCounts[target] = (voteCounts[target] ?? 0) + 1;
 
   const selectable =
     meP.alive &&
@@ -165,7 +169,8 @@ function OfflinePage() {
 
   const canWrite =
     meP.alive &&
-    ((tab === "GLOBAL" && (state.phase === "DAY_CONCLUSION" || (state.phase === "DAY_DISCUSSION" && isSpeaker))) ||
+    ((tab === "GLOBAL" &&
+      (state.phase === "DAY_CONCLUSION" || (state.phase === "DAY_DISCUSSION" && isSpeaker))) ||
       (tab === "WOLF_PRIVATE" && state.phase === "NIGHT_WOLVES"));
 
   const list = state.messages.filter((m) => m.channel === tab);
@@ -265,7 +270,9 @@ function OfflinePage() {
                 setState({ ...ref.current });
               }}
               className={`display mt-3 w-full rounded-md px-4 py-2.5 text-xs font-bold tracking-widest uppercase ${
-                meP.wantsVote ? "border border-border text-muted-foreground" : "bg-primary text-primary-foreground"
+                meP.wantsVote
+                  ? "border border-border text-muted-foreground"
+                  : "bg-primary text-primary-foreground"
               }`}
             >
               {meP.wantsVote ? t("room.cancelReadyVote") : t("room.readyVote")}
@@ -283,7 +290,9 @@ function OfflinePage() {
             [
               ["GLOBAL", t("chat.village")],
               ...(meP.role === "WOLF" ? [["WOLF_PRIVATE", t("chat.pack")] as const] : []),
-              ...(meP.role === "DETECTIVE" ? [["DETECTIVE_PRIVATE", t("chat.operator")] as const] : []),
+              ...(meP.role === "DETECTIVE"
+                ? [["DETECTIVE_PRIVATE", t("chat.operator")] as const]
+                : []),
             ] as [OfflineMessage["channel"], string][]
           ).map(([key, label]) => (
             <button
@@ -336,7 +345,9 @@ function OfflinePage() {
                 setText("");
                 setState({ ...ref.current });
               }}
-              placeholder={tab === "WOLF_PRIVATE" ? t("chat.packPlaceholder") : t("chat.placeholder")}
+              placeholder={
+                tab === "WOLF_PRIVATE" ? t("chat.packPlaceholder") : t("chat.placeholder")
+              }
               className="min-w-0 flex-1 rounded-md border border-input bg-secondary px-3 py-2 text-sm outline-none focus:border-primary"
             />
             <button
@@ -364,7 +375,9 @@ function OfflinePage() {
 
       {showCard && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 px-6 py-8">
-          <p className="display text-xs tracking-widest text-muted-foreground uppercase">{t("room.myCard")}</p>
+          <p className="display text-xs tracking-widest text-muted-foreground uppercase">
+            {t("room.myCard")}
+          </p>
           <div className="mt-3 w-56">
             <GameCard role={meP.role} />
           </div>

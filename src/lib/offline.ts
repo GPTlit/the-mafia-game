@@ -55,18 +55,45 @@ const ROLE_TABLE: Record<number, [number, number, number]> = {
 };
 
 const BOT_NAMES = [
-  "NOVA", "RIGEL", "ORION", "ZETA", "VEGA", "ATLAS",
-  "LYRA", "CASSI", "DRACO", "MIRA", "PAVO", "JUNO", "ARES", "ECHO",
+  "NOVA",
+  "RIGEL",
+  "ORION",
+  "ZETA",
+  "VEGA",
+  "ATLAS",
+  "LYRA",
+  "CASSI",
+  "DRACO",
+  "MIRA",
+  "PAVO",
+  "JUNO",
+  "ARES",
+  "ECHO",
 ];
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 const avatarOf = (seed: string, bot: boolean) =>
   `https://api.dicebear.com/9.x/${bot ? "bottts-neutral" : "notionists-neutral"}/svg?seed=${seed}&backgroundColor=1f1f22`;
-const shuffle = <T,>(a: T[]) => a.map((v) => [Math.random(), v] as const).sort((x, y) => x[0] - y[0]).map(([, v]) => v);
-const pick = <T,>(a: T[]): T | undefined => a[Math.floor(Math.random() * a.length)];
+const shuffle = <T>(a: T[]) =>
+  a
+    .map((v) => [Math.random(), v] as const)
+    .sort((x, y) => x[0] - y[0])
+    .map(([, v]) => v);
+const pick = <T>(a: T[]): T | undefined => a[Math.floor(Math.random() * a.length)];
 
-function say(s: OfflineState, sender: string | null, key: string, vars?: Record<string, string | number>) {
-  s.messages.push({ id: uid(), sender_id: sender, key, ...(vars ? { vars } : {}), channel: "GLOBAL" });
+function say(
+  s: OfflineState,
+  sender: string | null,
+  key: string,
+  vars?: Record<string, string | number>,
+) {
+  s.messages.push({
+    id: uid(),
+    sender_id: sender,
+    key,
+    ...(vars ? { vars } : {}),
+    channel: "GLOBAL",
+  });
 }
 
 export function createOfflineGame(total: number, myName: string): OfflineState {
@@ -387,7 +414,8 @@ function botsAct(s: OfflineState) {
       const t = botTarget(s, b);
       if (t) s.votes[b.id] = t;
     }
-    if (alive.every((p) => s.votes[p.id])) s.endsAt = Math.min(s.endsAt ?? Infinity, Date.now() + 1500);
+    if (alive.every((p) => s.votes[p.id]))
+      s.endsAt = Math.min(s.endsAt ?? Infinity, Date.now() + 1500);
     return;
   }
 }

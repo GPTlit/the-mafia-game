@@ -71,7 +71,11 @@ function Index() {
   }
 
   if (loading) {
-    return <main className="flex min-h-screen items-center justify-center text-muted-foreground">Loading…</main>;
+    return (
+      <main className="flex min-h-screen items-center justify-center text-muted-foreground">
+        Loading…
+      </main>
+    );
   }
 
   if (!session) {
@@ -119,9 +123,7 @@ function Index() {
 
       <div className="panel mt-6 p-5">
         <h2 className="display text-sm font-bold tracking-widest uppercase">{t("home.host")}</h2>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {t("home.hostHint")}
-        </p>
+        <p className="mt-1 text-xs text-muted-foreground">{t("home.hostHint")}</p>
         <button
           onClick={() => void create()}
           disabled={busy}

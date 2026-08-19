@@ -38,7 +38,9 @@ export function PlayerGrid({
                 disabled={disabled}
                 onClick={() => onSelect?.(p.user_id)}
                 className={`w-16 rounded-xl border px-1 py-1.5 text-center transition-colors ${
-                  selectedId === p.user_id ? "border-primary bg-primary/15" : "border-border bg-card"
+                  selectedId === p.user_id
+                    ? "border-primary bg-primary/15"
+                    : "border-border bg-card"
                 } ${p.is_alive ? "" : "opacity-40"} ${disabled ? "cursor-default" : "hover:border-primary"}`}
               >
                 <div className="relative mx-auto h-9 w-9">
@@ -62,7 +64,10 @@ export function PlayerGrid({
                   {p.user_id === meId ? t("state.you").trim().replace(/[()]/g, "") : p.username}
                 </p>
                 {role && (
-                  <p className="truncate text-[8px] tracking-wide" style={{ color: ROLES[role].tone }}>
+                  <p
+                    className="truncate text-[8px] tracking-wide"
+                    style={{ color: ROLES[role].tone }}
+                  >
                     {t(`role.${role}.label`)}
                   </p>
                 )}
@@ -120,7 +125,10 @@ export function PlayerGrid({
                 {p.user_id === meId ? t("state.you") : ""}
               </p>
               {role && (
-                <p className="display text-[9px] tracking-widest" style={{ color: ROLES[role].tone }}>
+                <p
+                  className="display text-[9px] tracking-widest"
+                  style={{ color: ROLES[role].tone }}
+                >
                   {t(`role.${role}.label`)}
                 </p>
               )}
