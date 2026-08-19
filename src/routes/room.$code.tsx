@@ -484,18 +484,6 @@ async function performAction(roomId: string, phase: string | null, target: strin
   if (phase === "DAY_VOTING") return api.castVote(roomId, target);
 }
 
-function canWrite(
-  channel: "GLOBAL" | "WOLF_PRIVATE" | "DETECTIVE_PRIVATE",
-  phase: string | null,
-  isSpeaker: boolean,
-) {
-  if (channel === "WOLF_PRIVATE") return phase === "NIGHT_WOLVES";
-  if (channel === "DETECTIVE_PRIVATE") return true;
-  if (phase === "DAY_DISCUSSION") return isSpeaker;
-  if (phase === "DAY_CONCLUSION") return true;
-  return phase === "DAY_VOTING";
-}
-
 function instructions(
   t: TFunc,
   phase: string | null,
