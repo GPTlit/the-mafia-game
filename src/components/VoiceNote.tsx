@@ -28,7 +28,7 @@ export function VoiceNote({ path, mine = false }: { path: string; mine?: boolean
   }, [path]);
 
   useEffect(() => {
-    if (audio.current) audio.current.playbackRate = SPEEDS[speedIdx];
+    if (audio.current) audio.current.playbackRate = SPEEDS[speedIdx] ?? 1;
   }, [speedIdx, url]);
 
   const pct = duration > 0 ? Math.min(100, (time / duration) * 100) : 0;
@@ -38,7 +38,7 @@ export function VoiceNote({ path, mine = false }: { path: string; mine?: boolean
     const el = audio.current;
     if (!el) return;
     if (el.paused) {
-      el.playbackRate = SPEEDS[speedIdx];
+      el.playbackRate = SPEEDS[speedIdx] ?? 1;
       void el.play();
     } else {
       el.pause();
@@ -53,7 +53,9 @@ export function VoiceNote({ path, mine = false }: { path: string; mine?: boolean
         disabled={!url}
         aria-label={playing ? "Pause voice message" : "Play voice message"}
         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-          mine ? "bg-primary-foreground/20 text-primary-foreground" : "bg-primary text-primary-foreground"
+          mine
+            ? "bg-primary-foreground/20 text-primary-foreground"
+            : "bg-primary text-primary-foreground"
         } disabled:opacity-50`}
       >
         {playing ? (
@@ -90,7 +92,9 @@ export function VoiceNote({ path, mine = false }: { path: string; mine?: boolean
             );
           })}
         </div>
-        <p className={`mt-0.5 text-[10px] tabular-nums ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+        <p
+          className={`mt-0.5 text-[10px] tabular-nums ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}
+        >
           {fmt(playing || time > 0 ? time : duration)}
         </p>
       </div>
@@ -99,10 +103,12 @@ export function VoiceNote({ path, mine = false }: { path: string; mine?: boolean
         type="button"
         onClick={() => setSpeedIdx((i) => (i + 1) % SPEEDS.length)}
         className={`shrink-0 rounded-full border px-1.5 py-0.5 text-[10px] font-bold tabular-nums ${
-          mine ? "border-primary-foreground/40 text-primary-foreground" : "border-border text-muted-foreground"
+          mine
+            ? "border-primary-foreground/40 text-primary-foreground"
+            : "border-border text-muted-foreground"
         }`}
       >
-        {SPEEDS[speedIdx]}x
+        {SPEEDS[speedIdx] ?? 1}x
       </button>
 
       {url && (

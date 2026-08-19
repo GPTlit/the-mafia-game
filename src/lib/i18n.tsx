@@ -22,7 +22,8 @@ const en: Dict = {
   "home.code": "ROOM CODE",
   "home.joinCta": "Join",
   "home.offline": "Offline mode",
-  "home.offlineHint": "Play alone against bots that think for themselves. No internet table needed.",
+  "home.offlineHint":
+    "Play alone against bots that think for themselves. No internet table needed.",
   "home.offlinePlay": "Play vs bots",
   "home.fourCards": "The four cards",
   "lobby.title": "Lobby",
@@ -136,6 +137,18 @@ const en: Dict = {
   "op.isWolf": "Is {name} a wolf?",
   "op.yes": "Yes",
   "op.no": "No",
+  "call.join": "Join voice",
+  "call.leave": "Leave voice",
+  "call.mute": "Mute",
+  "call.unmute": "Unmute",
+  "call.live": "Live · {n}",
+  "call.micDenied": "Microphone permission denied.",
+  "action.kill": "Choose who the pack kills",
+  "action.check": "Choose who to investigate",
+  "action.heal": "Choose who to heal",
+  "action.vote": "Choose who to vote out",
+  "action.picked": "Locked: {name}",
+  "action.change": "Change",
 };
 
 const fr: Dict = {
@@ -145,7 +158,8 @@ const fr: Dict = {
   "nav.home": "Accueil",
   "home.welcome": "Bon retour{name}. Réunis 6 à 15 joueurs.",
   "home.host": "Créer une partie",
-  "home.hostHint": "Tu reçois un code de salle à partager. Tu peux remplir les places vides avec des bots.",
+  "home.hostHint":
+    "Tu reçois un code de salle à partager. Tu peux remplir les places vides avec des bots.",
   "home.create": "Créer la salle",
   "home.join": "Rejoindre une partie",
   "home.code": "CODE DE SALLE",
@@ -265,6 +279,18 @@ const fr: Dict = {
   "op.isWolf": "Est-ce que {name} est un loup ?",
   "op.yes": "Oui",
   "op.no": "Non",
+  "call.join": "Rejoindre l'appel",
+  "call.leave": "Quitter l'appel",
+  "call.mute": "Couper le micro",
+  "call.unmute": "Activer le micro",
+  "call.live": "En direct · {n}",
+  "call.micDenied": "Permission du micro refusée.",
+  "action.kill": "Choisis la cible de la meute",
+  "action.check": "Choisis qui enquêter",
+  "action.heal": "Choisis qui soigner",
+  "action.vote": "Choisis qui éliminer",
+  "action.picked": "Choix : {name}",
+  "action.change": "Changer",
 };
 
 const ar: Dict = {
@@ -394,6 +420,18 @@ const ar: Dict = {
   "op.isWolf": "هل {name} ذئب؟",
   "op.yes": "نعم",
   "op.no": "لا",
+  "call.join": "انضم للمكالمة",
+  "call.leave": "اخرج من المكالمة",
+  "call.mute": "كتم",
+  "call.unmute": "إلغاء الكتم",
+  "call.live": "مباشر · {n}",
+  "call.micDenied": "تم رفض إذن الميكروفون.",
+  "action.kill": "اختر من يقتله القطيع",
+  "action.check": "اختر من تحقق عنه",
+  "action.heal": "اختر من تعالجه",
+  "action.vote": "اختر من تصوّت عليه",
+  "action.picked": "اخترت: {name}",
+  "action.change": "تغيير",
 };
 
 const DICTS: Record<Lang, Dict> = { en, fr, ar };

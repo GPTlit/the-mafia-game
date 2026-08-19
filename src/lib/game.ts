@@ -74,7 +74,9 @@ function unwrap<T>(res: { data: T; error: { message: string } | null }): T {
 
 export const api = {
   async getState(roomId: string) {
-    return unwrap(await supabase.rpc("get_room_state", { p_room_id: roomId })) as unknown as RoomState;
+    return unwrap(
+      await supabase.rpc("get_room_state", { p_room_id: roomId }),
+    ) as unknown as RoomState;
   },
   async roomIdByCode(code: string) {
     return unwrap(await supabase.rpc("room_id_by_code", { p_code: code })) as string | null;
@@ -98,7 +100,9 @@ export const api = {
     unwrap(await supabase.rpc("wolf_vote", { p_room_id: roomId, p_target: target }));
   },
   async detectiveCheck(roomId: string, target: string) {
-    return unwrap(await supabase.rpc("detective_check", { p_room_id: roomId, p_target: target })) as boolean;
+    return unwrap(
+      await supabase.rpc("detective_check", { p_room_id: roomId, p_target: target }),
+    ) as boolean;
   },
   async doctorHeal(roomId: string, target: string) {
     unwrap(await supabase.rpc("doctor_heal", { p_room_id: roomId, p_target: target }));
@@ -173,7 +177,10 @@ export const AVATARS = [
   "nova",
   "rook",
   "vera",
-].map((seed) => `https://api.dicebear.com/9.x/notionists-neutral/svg?seed=${seed}&backgroundColor=1f1f22`);
+].map(
+  (seed) =>
+    `https://api.dicebear.com/9.x/notionists-neutral/svg?seed=${seed}&backgroundColor=1f1f22`,
+);
 
 export function phaseKey(phase: Phase | null, status: string) {
   if (status === "LOBBY") return "phase.LOBBY";

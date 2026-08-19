@@ -46,7 +46,9 @@ function Recorder({ onDone }: { onDone: (blob: Blob) => void }) {
       onClick={() => (recording ? stop() : void start())}
       aria-label="Record a voice message"
       className={`flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-full px-3 transition-colors ${
-        recording ? "bg-destructive text-destructive-foreground" : "bg-secondary text-muted-foreground"
+        recording
+          ? "bg-destructive text-destructive-foreground"
+          : "bg-secondary text-muted-foreground"
       }`}
     >
       {recording ? (
@@ -57,7 +59,13 @@ function Recorder({ onDone }: { onDone: (blob: Blob) => void }) {
           </span>
         </>
       ) : (
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <svg
+          viewBox="0 0 24 24"
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        >
           <rect x="9" y="3" width="6" height="11" rx="3" />
           <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
         </svg>
@@ -159,7 +167,9 @@ export function Chat({
                   }`}
                 >
                   {!mine && (
-                    <p className="text-[10px] font-semibold text-muted-foreground">{nameOf(m.sender_id)}</p>
+                    <p className="text-[10px] font-semibold text-muted-foreground">
+                      {nameOf(m.sender_id)}
+                    </p>
                   )}
                   {m.content && <p className="break-words">{m.content}</p>}
                   {m.audio_url && (

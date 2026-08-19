@@ -5,6 +5,7 @@ import { useSession } from "@/hooks/useSession";
 import { AuthPanel } from "@/components/AuthPanel";
 import { api } from "@/lib/game";
 import { GameCard, ROLES, WolfSigil, type RoleKey } from "@/lib/roles";
+import { ThemeToggle } from "@/lib/theme";
 import { LanguageSwitcher, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
@@ -71,14 +72,21 @@ function Index() {
   }
 
   if (loading) {
-    return <main className="flex min-h-screen items-center justify-center text-muted-foreground">Loading…</main>;
+    return (
+      <main className="flex min-h-screen items-center justify-center text-muted-foreground">
+        Loading…
+      </main>
+    );
   }
 
   if (!session) {
     return (
       <main className="min-h-screen px-4 py-10">
         <div className="mx-auto mb-4 flex max-w-sm justify-end">
-          <LanguageSwitcher />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
         </div>
         <AuthPanel />
         <section className="mx-auto mt-10 max-w-sm">
@@ -103,7 +111,10 @@ function Index() {
           <h1 className="display text-2xl font-bold uppercase">Wolf Night</h1>
         </div>
         <div className="flex items-center gap-2">
-          <LanguageSwitcher />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
           <button
             onClick={() => void supabase.auth.signOut()}
             className="text-xs text-muted-foreground underline"
@@ -119,9 +130,7 @@ function Index() {
 
       <div className="panel mt-6 p-5">
         <h2 className="display text-sm font-bold tracking-widest uppercase">{t("home.host")}</h2>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {t("home.hostHint")}
-        </p>
+        <p className="mt-1 text-xs text-muted-foreground">{t("home.hostHint")}</p>
         <button
           onClick={() => void create()}
           disabled={busy}

@@ -50,7 +50,8 @@ export function useVoiceCall(roomId: string | null, selfId: string | null) {
       const pc = new RTCPeerConnection(ICE);
       stream.current?.getTracks().forEach((tr) => pc.addTrack(tr, stream.current!));
       pc.onicecandidate = (e) => {
-        if (e.candidate && selfId) send({ kind: "ice", from: selfId, to: id, candidate: e.candidate.toJSON() });
+        if (e.candidate && selfId)
+          send({ kind: "ice", from: selfId, to: id, candidate: e.candidate.toJSON() });
       };
       pc.ontrack = (e) => {
         let el = audios.current.get(id);
@@ -61,7 +62,7 @@ export function useVoiceCall(roomId: string | null, selfId: string | null) {
           document.body.appendChild(el);
           audios.current.set(id, el);
         }
-        el.srcObject = e.streams[0];
+        el.srcObject = e.streams[0] ?? null;
         void el.play().catch(() => {});
         setPeers((p) => (p.includes(id) ? p : [...p, id]));
       };
