@@ -5,6 +5,7 @@ import { useSession } from "@/hooks/useSession";
 import { AuthPanel } from "@/components/AuthPanel";
 import { api } from "@/lib/game";
 import { GameCard, ROLES, WolfSigil, type RoleKey } from "@/lib/roles";
+import { ThemeToggle } from "@/lib/theme";
 import { LanguageSwitcher, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
@@ -82,7 +83,10 @@ function Index() {
     return (
       <main className="min-h-screen px-4 py-10">
         <div className="mx-auto mb-4 flex max-w-sm justify-end">
-          <LanguageSwitcher />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
         </div>
         <AuthPanel />
         <section className="mx-auto mt-10 max-w-sm">
@@ -107,7 +111,10 @@ function Index() {
           <h1 className="display text-2xl font-bold uppercase">Wolf Night</h1>
         </div>
         <div className="flex items-center gap-2">
-          <LanguageSwitcher />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
           <button
             onClick={() => void supabase.auth.signOut()}
             className="text-xs text-muted-foreground underline"

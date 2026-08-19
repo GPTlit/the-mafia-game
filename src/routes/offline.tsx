@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { ThemeToggle } from "@/lib/theme";
 import { LanguageSwitcher, useI18n, type TFunc } from "@/lib/i18n";
 import { GameCard, ROLES, WolfSigil, type RoleKey } from "@/lib/roles";
 import { PlayerGrid } from "@/components/PlayerGrid";
@@ -80,7 +81,10 @@ function OfflinePage() {
             <WolfSigil className="h-7 w-9 text-primary" />
             <h1 className="display text-xl font-bold uppercase">{t("offline.title")}</h1>
           </div>
-          <LanguageSwitcher />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
         </header>
         <p className="mt-4 text-sm text-muted-foreground">{t("offline.hint")}</p>
         <div className="panel mt-6 p-5">
@@ -191,7 +195,10 @@ function OfflinePage() {
           </div>
         </div>
         <div className="text-end">
-          <LanguageSwitcher className="justify-end" />
+          <div className="flex items-center justify-end gap-2">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
           <p className="display mt-1 text-[10px] tracking-widest text-primary uppercase">
             {t(phaseKey(state.phase, state.status))}
           </p>
