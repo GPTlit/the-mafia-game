@@ -3,6 +3,7 @@ import cardDetective from "@/assets/card-detective.png";
 import cardDoctor from "@/assets/card-doctor.png";
 import cardCivilian from "@/assets/card-civilian.png";
 import { useI18n, type TFunc } from "@/lib/i18n";
+import logoAsset from "@/assets/mafia-logo.png.asset.json";
 
 export type RoleKey = "WOLF" | "DETECTIVE" | "DOCTOR" | "CIVILIAN";
 
