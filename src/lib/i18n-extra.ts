@@ -1,0 +1,303 @@
+type Dict = Record<string, string>;
+
+export const extraEn: Dict = {
+  "app.title": "THE MAFIA",
+  "app.tagline": "TRUST NO ONE",
+  "app.motto": "Talk · Trust · Survive",
+  "home.playNow": "Play Now",
+  "home.modes": "Player Count & Roles",
+  "home.modeOnline": "Online Multiplayer",
+  "home.modeOnlineHint": "Real players, real time",
+  "home.modeHybrid": "Hybrid",
+  "home.modeHybridHint": "Play with friends + bots",
+  "home.modeSolo": "Solo Practice",
+  "home.modeSoloHint": "Offline, 4-7 bots",
+  "home.theRoles": "The Roles",
+  "home.gameModes": "Game Modes",
+  "home.gm1": "1 Wolf · 1 Detective · 1 Doctor · 1–2 Civilians",
+  "home.gm2": "2 Wolves · 1 Detective · 1 Doctor · 2–4 Civilians",
+  "home.gm3": "3 Wolves · 1 Detective · 1 Doctor · Remainder Civilians",
+  "home.settings": "Settings",
+  "home.language": "Language",
+  "home.theme": "Theme",
+  "home.light": "Light",
+  "home.dark": "Dark",
+  "common.loading": "Loading…",
+  "common.wait": "Please wait…",
+  "auth.subtitle": "Social deduction, 6 to 15 players",
+  "auth.signup": "Create account",
+  "auth.signin": "Sign in",
+  "auth.username": "Username",
+  "auth.phone": "Phone number",
+  "auth.password": "Password",
+  "auth.avatar": "Choose your avatar",
+  "auth.enter": "Enter the game",
+  "auth.badUsername": "Username: 3-20 letters, numbers or underscores",
+  "auth.wrong": "Wrong username or password",
+  "auth.generic": "Something went wrong",
+  "auth.taken": "This username is already taken",
+  "auth.weakPassword": "Password must be at least 6 characters",
+  "err.createRoom": "Could not create room",
+  "err.joinRoom": "Could not join room",
+  "err.openRoom": "Could not open room",
+  "err.action": "Action failed",
+  "room.code": "Room Code",
+  "room.share": "Share",
+  "room.copied": "Copied!",
+  "room.host": "Host",
+  "room.bots": "Bots",
+  "room.waitingPlayers": "Waiting for players…",
+  "room.players": "Players",
+  "room.nightPhase": "Night Phase",
+  "room.nightWaiting": "Waiting for players to submit their actions…",
+  "chat.globalTab": "Global Chat",
+  "chat.packTab": "Wolf Pack",
+  "chat.operatorTab": "Operator",
+  "voice.play": "Play voice message",
+  "voice.pause": "Pause voice message",
+  "voice.record": "Record a voice message",
+  "theme.toggle": "Toggle colour theme",
+  "nf.title": "Page not found",
+  "nf.body": "The page you're looking for doesn't exist or has been moved.",
+  "nf.home": "Go home",
+  "srv.Not authenticated": "You are not signed in.",
+  "srv.Room not found": "Room not found.",
+  "srv.Room is full": "The room is full.",
+  "srv.Game already started": "The game already started.",
+  "srv.Only the host can start": "Only the host can start.",
+  "srv.Only the host can add bots": "Only the host can add bots.",
+  "srv.Only the host can remove bots": "Only the host can remove bots.",
+  "srv.All players must be ready": "All players must be ready.",
+  "srv.Need between 6 and 15 players": "You need between 6 and 15 players.",
+  "srv.Not a member of this room": "You are not a member of this room.",
+  "srv.Not allowed": "Not allowed.",
+  "srv.Invalid target": "Invalid target.",
+  "srv.Dead players cannot vote": "Dead players cannot vote.",
+  "srv.Voting is not open": "Voting is not open.",
+  "srv.Not the wolves phase": "It is not the wolves' turn.",
+  "srv.Not the detective phase": "It is not the detective's turn.",
+  "srv.Not the doctor phase": "It is not the doctor's turn.",
+  "srv.You already investigated this night": "You already investigated tonight.",
+  "srv.You can only heal yourself once per game": "You can only heal yourself once per game.",
+};
+
+export const extraFr: Dict = {
+  "app.title": "THE MAFIA",
+  "app.tagline": "NE FAIS CONFIANCE À PERSONNE",
+  "app.motto": "Parler · Croire · Survivre",
+  "home.playNow": "Jouer",
+  "home.modes": "Joueurs & rôles",
+  "home.modeOnline": "Multijoueur en ligne",
+  "home.modeOnlineHint": "Vrais joueurs, temps réel",
+  "home.modeHybrid": "Hybride",
+  "home.modeHybridHint": "Amis + bots",
+  "home.modeSolo": "Entraînement solo",
+  "home.modeSoloHint": "Hors ligne, 4 à 7 bots",
+  "home.theRoles": "Les rôles",
+  "home.gameModes": "Modes de jeu",
+  "home.gm1": "1 Loup · 1 Détective · 1 Médecin · 1–2 Civils",
+  "home.gm2": "2 Loups · 1 Détective · 1 Médecin · 2–4 Civils",
+  "home.gm3": "3 Loups · 1 Détective · 1 Médecin · Reste en civils",
+  "home.settings": "Réglages",
+  "home.language": "Langue",
+  "home.theme": "Thème",
+  "home.light": "Clair",
+  "home.dark": "Sombre",
+  "common.loading": "Chargement…",
+  "common.wait": "Patiente…",
+  "auth.subtitle": "Jeu de déduction, 6 à 15 joueurs",
+  "auth.signup": "Créer un compte",
+  "auth.signin": "Se connecter",
+  "auth.username": "Nom d'utilisateur",
+  "auth.phone": "Numéro de téléphone",
+  "auth.password": "Mot de passe",
+  "auth.avatar": "Choisis ton avatar",
+  "auth.enter": "Entrer dans le jeu",
+  "auth.badUsername": "Nom : 3 à 20 lettres, chiffres ou tirets bas",
+  "auth.wrong": "Nom d'utilisateur ou mot de passe incorrect",
+  "auth.generic": "Une erreur est survenue",
+  "auth.taken": "Ce nom d'utilisateur est déjà pris",
+  "auth.weakPassword": "Le mot de passe doit contenir au moins 6 caractères",
+  "err.createRoom": "Impossible de créer la salle",
+  "err.joinRoom": "Impossible de rejoindre la salle",
+  "err.openRoom": "Impossible d'ouvrir la salle",
+  "err.action": "Action échouée",
+  "room.code": "Code de salle",
+  "room.share": "Partager",
+  "room.copied": "Copié !",
+  "room.host": "Hôte",
+  "room.bots": "Bots",
+  "room.waitingPlayers": "En attente des joueurs…",
+  "room.players": "Joueurs",
+  "room.nightPhase": "Phase de nuit",
+  "room.nightWaiting": "En attente des actions des joueurs…",
+  "chat.globalTab": "Chat global",
+  "chat.packTab": "Meute",
+  "chat.operatorTab": "Opérateur",
+  "voice.play": "Lire le message vocal",
+  "voice.pause": "Pause",
+  "voice.record": "Enregistrer un message vocal",
+  "theme.toggle": "Changer le thème",
+  "nf.title": "Page introuvable",
+  "nf.body": "Cette page n'existe pas ou a été déplacée.",
+  "nf.home": "Accueil",
+  "srv.Not authenticated": "Tu n'es pas connecté.",
+  "srv.Room not found": "Salle introuvable.",
+  "srv.Room is full": "La salle est pleine.",
+  "srv.Game already started": "La partie a déjà commencé.",
+  "srv.Only the host can start": "Seul l'hôte peut lancer.",
+  "srv.Only the host can add bots": "Seul l'hôte peut ajouter des bots.",
+  "srv.Only the host can remove bots": "Seul l'hôte peut retirer des bots.",
+  "srv.All players must be ready": "Tous les joueurs doivent être prêts.",
+  "srv.Need between 6 and 15 players": "Il faut entre 6 et 15 joueurs.",
+  "srv.Not a member of this room": "Tu n'es pas membre de cette salle.",
+  "srv.Not allowed": "Non autorisé.",
+  "srv.Invalid target": "Cible invalide.",
+  "srv.Dead players cannot vote": "Les morts ne votent pas.",
+  "srv.Voting is not open": "Le vote n'est pas ouvert.",
+  "srv.Not the wolves phase": "Ce n'est pas le tour des loups.",
+  "srv.Not the detective phase": "Ce n'est pas le tour du détective.",
+  "srv.Not the doctor phase": "Ce n'est pas le tour du médecin.",
+  "srv.You already investigated this night": "Tu as déjà enquêté cette nuit.",
+  "srv.You can only heal yourself once per game": "Tu ne peux te soigner qu'une fois par partie.",
+};
+
+export const extraAr: Dict = {
+  "app.title": "المافيا",
+  "app.tagline": "لا تثق بأحد",
+  "app.motto": "تكلّم · ثِق · انجُ",
+  "home.playNow": "العب الآن",
+  "home.modes": "عدد اللاعبين والأدوار",
+  "home.modeOnline": "لعب جماعي عبر الإنترنت",
+  "home.modeOnlineHint": "لاعبون حقيقيون، في الوقت الفعلي",
+  "home.modeHybrid": "مختلط",
+  "home.modeHybridHint": "العب مع الأصدقاء + روبوتات",
+  "home.modeSolo": "تدريب فردي",
+  "home.modeSoloHint": "دون اتصال، من 4 إلى 7 روبوتات",
+  "home.theRoles": "الأدوار",
+  "home.gameModes": "أنماط اللعب",
+  "home.gm1": "ذئب واحد · محقق · طبيب · 1–2 مدنيين",
+  "home.gm2": "ذئبان · محقق · طبيب · 2–4 مدنيين",
+  "home.gm3": "3 ذئاب · محقق · طبيب · والباقي مدنيون",
+  "home.settings": "الإعدادات",
+  "home.language": "اللغة",
+  "home.theme": "المظهر",
+  "home.light": "فاتح",
+  "home.dark": "داكن",
+  "common.loading": "جارٍ التحميل…",
+  "common.wait": "يرجى الانتظار…",
+  "auth.subtitle": "لعبة استنتاج اجتماعي، من 6 إلى 15 لاعباً",
+  "auth.signup": "إنشاء حساب جديد",
+  "auth.signin": "تسجيل الدخول",
+  "auth.username": "اسم المستخدم",
+  "auth.phone": "رقم الهاتف",
+  "auth.password": "كلمة المرور",
+  "auth.avatar": "اختر صورتك الرمزية",
+  "auth.enter": "ادخل اللعبة",
+  "auth.badUsername": "اسم المستخدم: من 3 إلى 20 حرفاً إنجليزياً أو رقماً أو شرطة سفلية",
+  "auth.wrong": "اسم المستخدم أو كلمة المرور غير صحيحة",
+  "auth.generic": "حدث خطأ ما",
+  "auth.taken": "اسم المستخدم هذا مستخدم بالفعل",
+  "auth.weakPassword": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+  "err.createRoom": "تعذّر إنشاء الغرفة",
+  "err.joinRoom": "تعذّر الانضمام إلى الغرفة",
+  "err.openRoom": "تعذّر فتح الغرفة",
+  "err.action": "فشل الإجراء",
+  "room.code": "رمز الغرفة",
+  "room.share": "مشاركة",
+  "room.copied": "تم النسخ!",
+  "room.host": "المضيف",
+  "room.bots": "روبوتات",
+  "room.waitingPlayers": "في انتظار بقية اللاعبين…",
+  "room.players": "اللاعبون",
+  "room.nightPhase": "مرحلة الليل",
+  "room.nightWaiting": "في انتظار اللاعبين لتنفيذ أفعالهم…",
+  "chat.globalTab": "الدردشة العامة",
+  "chat.packTab": "قناة الذئاب",
+  "chat.operatorTab": "الراوي",
+  "chat.operator": "الراوي",
+  "chat.operatorName": "الراوي",
+  "voice.play": "تشغيل الرسالة الصوتية",
+  "voice.pause": "إيقاف مؤقت",
+  "voice.record": "تسجيل رسالة صوتية",
+  "theme.toggle": "تبديل المظهر",
+  "nf.title": "الصفحة غير موجودة",
+  "nf.body": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+  "nf.home": "العودة للرئيسية",
+  "srv.Not authenticated": "لم تقم بتسجيل الدخول.",
+  "srv.Room not found": "الغرفة غير موجودة.",
+  "srv.Room is full": "الغرفة ممتلئة.",
+  "srv.Game already started": "بدأت اللعبة بالفعل.",
+  "srv.Only the host can start": "المضيف فقط يمكنه بدء اللعبة.",
+  "srv.Only the host can add bots": "المضيف فقط يمكنه إضافة روبوتات.",
+  "srv.Only the host can remove bots": "المضيف فقط يمكنه حذف الروبوتات.",
+  "srv.All players must be ready": "يجب أن يكون جميع اللاعبين جاهزين.",
+  "srv.Need between 6 and 15 players": "يلزم من 6 إلى 15 لاعباً.",
+  "srv.Not a member of this room": "لست عضواً في هذه الغرفة.",
+  "srv.Not allowed": "غير مسموح.",
+  "srv.Invalid target": "هدف غير صالح.",
+  "srv.Dead players cannot vote": "اللاعبون الموتى لا يمكنهم التصويت.",
+  "srv.Voting is not open": "التصويت غير مفتوح.",
+  "srv.Not the wolves phase": "ليس دور الذئاب الآن.",
+  "srv.Not the detective phase": "ليس دور المحقق الآن.",
+  "srv.Not the doctor phase": "ليس دور الطبيب الآن.",
+  "srv.You already investigated this night": "لقد حققت بالفعل هذه الليلة.",
+  "srv.You can only heal yourself once per game": "يمكنك علاج نفسك مرة واحدة فقط في اللعبة.",
+};
+
+/** English bot lines sent by the server → i18n keys. */
+const SERVER_BOT_LINES: Record<string, string> = {
+  "I have a bad feeling about the quiet ones.": "bot.line1",
+  "Nothing suspicious from my side last night.": "bot.line2",
+  "Whoever pushed the vote first is usually hiding something.": "bot.line3",
+  "I am town. Let us not waste a day.": "bot.line4",
+  "Watch who defends who too fast.": "bot.line5",
+  "I would rather vote than sit here silent.": "bot.line6",
+};
+
+type T = (key: string, vars?: Record<string, string | number>) => string;
+
+/**
+ * The server writes narrator and bot messages in English. Map each known
+ * sentence back to an i18n key so every language sees them translated.
+ */
+export function localizeServerText(text: string, t: T, players: { username: string }[]): string {
+  const s = text.trim();
+  const bot = SERVER_BOT_LINES[s];
+  if (bot) return t(bot);
+  const findName = (upper: string) =>
+    players.find((p) => p.username.toUpperCase() === upper)?.username ?? upper;
+  let m: RegExpMatchArray | null;
+  if ((m = s.match(/^Night (\d+) begins\. Everyone goes to sleep\.$/))) return t("op.night", { n: m[1]! });
+  if (s === "The night falls. Roles have been distributed.") return t("op.dealt");
+  if (s === "VOTING IS OPEN. YOU HAVE ONE MINUTE.") return t("op.votingOpen");
+  if ((m = s.match(/^DAY (\d+): EACH LIVING PLAYER HAS ONE MINUTE TO SPEAK\.$/))) return t("op.day", { n: m[1]! });
+  if (s === "OPEN DISCUSSION. THE VOTE OPENS WHEN THE MAJORITY IS READY.") return t("op.conclusion");
+  if (s === "THE WOLFS CAME LAST NIGHT, BUT NOBODY WAS KILLED.") return t("op.noKill");
+  if ((m = s.match(/^THE WOLFS CAME LAST NIGHT, AND THEY KILLED (.+)\. (BUT THE DOCTOR SAVED HIM!|SADLY THE DOCTOR DID NOT SAVE HIM\.)$/)))
+    return t("op.killed", {
+      name: findName(m[1]!),
+      saved: m[2]!.startsWith("BUT") ? t("op.saved") : t("op.notSaved"),
+    });
+  if (s === "NO VOTES WERE CAST. NOBODY WAS ELIMINATED.") return t("op.noVotes");
+  if (s === "THE VOTE WAS TIED. NOBODY WAS ELIMINATED.") return t("op.tie");
+  if ((m = s.match(/^THE TOWN HAS ELIMINATED (.+)\. THEIR CARD IS REVEALED\.$/)))
+    return t("op.eliminated", { name: findName(m[1]!) });
+  if (s === "GAME OVER - THE WOLVES WIN.") return t("op.wolvesWin");
+  if (s === "GAME OVER - THE TOWN WINS.") return t("op.townWin");
+  if ((m = s.match(/^Is (.+) a wolf\?$/))) return t("op.isWolf", { name: m[1]! });
+  if (s === "Yes") return t("op.yes");
+  if (s === "No") return t("op.no");
+  return text;
+}
+
+/** Translate an error thrown by the server (or a known client error). */
+export function localizeError(e: unknown, t: T, fallbackKey: string): string {
+  const raw = e instanceof Error ? e.message : typeof e === "string" ? e : "";
+  const key = `srv.${raw.trim()}`;
+  const out = t(key);
+  if (out !== key) return out;
+  if (/already registered|already exists|duplicate/i.test(raw)) return t("auth.taken");
+  if (/at least 6|password should/i.test(raw)) return t("auth.weakPassword");
+  return t(fallbackKey);
+}
