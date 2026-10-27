@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import { setChatStyle, useChatStyle } from "@/lib/chatStyle";
 import { ROLES as ROLE_ART } from "@/lib/roles";
 import { useI18n, type Lang } from "@/lib/i18n";
@@ -116,7 +117,7 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
             aria-label="Close"
             className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            
+            <X className="h-4 w-4" />
           </button>
         </div>
 

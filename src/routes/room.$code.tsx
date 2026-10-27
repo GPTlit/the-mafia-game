@@ -1,3 +1,4 @@
+import { ArrowLeft, Settings, X } from "lucide-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -264,7 +265,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             aria-label="Back"
             className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            
+            <ArrowLeft className="h-4 w-4" />
           </button>
           <img
             src="/logo.png"
@@ -354,7 +355,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             aria-label="Settings"
             className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            
+            <Settings className="h-4 w-4" />
           </button>
         </div>
       </header>
@@ -554,8 +555,8 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                   }`}
                 >
                   <span>{lang === "ar" ? "قناة الذئاب" : "Wolf Pack"}</span>
-                  
-                </button>
+            <X className="h-4 w-4" />
+          </button>
               )}
 
               {myRole === "DETECTIVE" && (

@@ -1,3 +1,4 @@
+import { Settings, X } from "lucide-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -131,7 +132,7 @@ function Index() {
             aria-label="Settings"
             className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground transition"
           >
-            
+            <Settings className="h-4 w-4" />
           </button>
         </div>
       </header>
@@ -270,8 +271,8 @@ function Index() {
               aria-label="Close"
               className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-foreground/10 text-foreground"
             >
-              
-            </button>
+            <X className="h-4 w-4" />
+          </button>
             <AuthPanel />
           </div>
         </div>

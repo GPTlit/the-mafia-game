@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import {
@@ -96,7 +97,7 @@ export function ProfileModal({
             aria-label="Close"
             className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            
+            <X className="h-4 w-4" />
           </button>
         </div>
 

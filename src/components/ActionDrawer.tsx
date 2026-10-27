@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import type { Player } from "@/lib/game";
 import { useI18n } from "@/lib/i18n";
 import type { RoleKey } from "@/lib/roles";
@@ -131,7 +132,7 @@ export function ActionDrawer({
             aria-label="Dismiss"
             className="flex h-7 w-7 items-center justify-center rounded-full bg-foreground/5 text-xs text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            
+            <X className="h-4 w-4" />
           </button>
         </div>
 

@@ -1,3 +1,4 @@
+import { Phone } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { api, type ChatMessage, type Player } from "@/lib/game";
 import { useI18n } from "@/lib/i18n";
@@ -307,8 +308,8 @@ export function Chat({
               aria-label="Call icon"
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
             >
-              
-            </button>
+            <Phone className="h-4 w-4" />
+          </button>
 
             <div className="relative flex-1">
               <input
