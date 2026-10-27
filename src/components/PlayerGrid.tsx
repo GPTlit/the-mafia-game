@@ -49,7 +49,7 @@ export function PlayerGrid({
                     isSelected ? "scale-105 bg-foreground/10 ring-2" : "hover:bg-foreground/5 active:scale-95"
                   } ${!p.is_alive ? "opacity-40 grayscale" : ""}`}
                   style={{
-                    ringColor: isSelected ? selectionColor : "transparent",
+                    ["--tw-ring-color" as string]: isSelected ? selectionColor : "transparent",
                     boxShadow: isSelected ? `0 0 16px ${selectionColor}40` : "none",
                   }}
                 >

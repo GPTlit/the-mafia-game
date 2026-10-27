@@ -141,16 +141,6 @@ export async function fetchProfileStats(
   };
 
   try {
-    const rawLocal = localStorage.getItem(STORAGE_PREFIX + userId);
-    if (rawLocal) {
-      const parsed = JSON.parse(rawLocal);
-      Object.assign(fallback, parsed);
-    }
-  } catch {
-    // Ignore storage parse error
-  }
-
-  try {
     const { data, error } = await supabase
       .from("profiles")
       .select(

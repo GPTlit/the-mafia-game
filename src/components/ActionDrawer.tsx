@@ -151,7 +151,7 @@ export function ActionDrawer({
                 }`}
                 style={{
                   borderColor: isSelected ? themeColor : "transparent",
-                  ringColor: themeColor,
+                  ["--tw-ring-color" as string]: themeColor,
                 }}
               >
                 <div className="relative">

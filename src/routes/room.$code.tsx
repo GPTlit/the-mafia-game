@@ -17,7 +17,7 @@ import { SettingsDrawer } from "@/components/SettingsDrawer";
 import { ProfileModal } from "@/components/ProfileModal";
 import { useVoiceCall } from "@/lib/useVoiceCall";
 import { isNarratorMuted, setNarratorMuted, speakPhase } from "@/lib/narrator";
-import { awardPointsForMatch, fetchProfileStats, type ProfileStats } from "@/lib/profile";
+import { claimMatchReward, fetchProfileStats, type ProfileStats } from "@/lib/profile";
 
 export const Route = createFileRoute("/room/$code")({
   head: () => ({
@@ -144,15 +144,10 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
   // Pillar 1: Award points upon match finish
   useEffect(() => {
     if (state?.room.status === "FINISHED" && !matchAwarded && profileStats && state.me) {
-      const won =
-        (state.room.winner === "WOLVES" && state.me.role === "WOLF") ||
-        (state.room.winner === "TOWN" && state.me.role !== "WOLF");
-      const { updated } = awardPointsForMatch(profileStats, {
-        won,
-        role: state.me.role,
-        survived: state.me.is_alive,
-      });
-      setProfileStats(updated);
+      const rid = state.room.id as string;
+      void claimMatchReward(rid).then(() =>
+        fetchProfileStats(state.me!.user_id).then(setProfileStats),
+      );
       setMatchAwarded(true);
     }
   }, [state?.room.status, matchAwarded, profileStats, state?.me]);
