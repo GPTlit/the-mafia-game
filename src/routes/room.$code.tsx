@@ -608,9 +608,12 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                 {phase === "DAY_DISCUSSION" && isSpeaker && me.is_alive && (
                   <button
                     onClick={() => void run(() => api.passTurn(roomId))}
-                    className="w-full rounded-2xl bg-amber-500 py-2.5 text-xs font-bold uppercase text-black shadow-md"
+                    className="flex w-full items-center justify-between rounded-2xl border border-border bg-accent px-4 py-2.5 text-xs font-semibold tracking-wide text-accent-foreground shadow-md transition hover:opacity-90 active:scale-[0.99]"
                   >
-                    {t("room.pass")}
+                    <span>{t("room.pass")}</span>
+                    <span className="rounded-full bg-background/25 px-2 py-0.5 tabular-nums">
+                      {secondsLeft}s
+                    </span>
                   </button>
                 )}
 
