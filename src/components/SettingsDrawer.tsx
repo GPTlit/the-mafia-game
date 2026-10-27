@@ -1,3 +1,5 @@
+import { setChatStyle, useChatStyle } from "@/lib/chatStyle";
+import { ROLES as ROLE_ART } from "@/lib/roles";
 import { useI18n, type Lang } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { ROLES, type RoleKey } from "@/lib/roles";
@@ -114,9 +116,12 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
             aria-label="Close"
             className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            ✕
+            
           </button>
         </div>
+
+        {/* Chat style */}
+        <ChatStylePicker lang={lang} />
 
         {/* The Roles Section */}
         <div className="mt-4">
@@ -134,13 +139,7 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg font-bold"
                   style={{ backgroundColor: `${r.color}20`, color: r.color }}
                 >
-                  {r.key === "WOLF"
-                    ? "🐺"
-                    : r.key === "DETECTIVE"
-                      ? "🕵️"
-                      : r.key === "DOCTOR"
-                        ? "➕"
-                        : "👤"}
+                  <img src={ROLE_ART[r.key as keyof typeof ROLE_ART].art} alt="" className="h-full w-full rounded-xl object-cover" loading="eager" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between">
@@ -206,7 +205,7 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
                   : "border-border bg-foreground/[0.02] text-muted-foreground hover:bg-foreground/5"
               }`}
             >
-              <span>☀️</span>
+              
               <span>{lang === "ar" ? "فاتح" : lang === "fr" ? "Clair" : "Light"}</span>
             </button>
             <button
@@ -218,7 +217,7 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
                   : "border-border bg-foreground/[0.02] text-muted-foreground hover:bg-foreground/5"
               }`}
             >
-              <span>🌙</span>
+              
               <span>{lang === "ar" ? "داكن" : lang === "fr" ? "Sombre" : "Dark"}</span>
             </button>
           </div>
@@ -257,6 +256,36 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
         >
           {lang === "ar" ? "تم" : lang === "fr" ? "Fermer" : "Done"}
         </button>
+      </div>
+    </div>
+  );
+}
+
+function ChatStylePicker({ lang }: { lang: string }) {
+  const style = useChatStyle();
+  const opts = [
+    { k: "bubbles" as const, l: lang === "ar" ? "فقاعات فوق الرأس" : lang === "fr" ? "Bulles au-dessus" : "Thought bubbles" },
+    { k: "side" as const, l: lang === "ar" ? "دردشة جانبية" : lang === "fr" ? "Discussion classique" : "Side chat" },
+  ];
+  return (
+    <div className="mt-4">
+      <h3 className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
+        {lang === "ar" ? "نمط الدردشة" : lang === "fr" ? "Style du chat" : "Chat style"}
+      </h3>
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        {opts.map((o) => (
+          <button
+            key={o.k}
+            onClick={() => setChatStyle(o.k)}
+            className={`rounded-xl border px-3 py-2.5 text-xs font-semibold transition ${
+              style === o.k
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border bg-card text-foreground hover:bg-foreground/5"
+            }`}
+          >
+            {o.l}
+          </button>
+        ))}
       </div>
     </div>
   );

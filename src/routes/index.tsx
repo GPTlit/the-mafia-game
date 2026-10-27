@@ -114,7 +114,7 @@ function Index() {
                 className="h-6 w-6 rounded-full border border-border object-cover"
               />
               <span className="text-[11px] font-bold" style={{ color: rankTier?.color }}>
-                {rankTier?.badge} {profileStats.points}
+                {profileStats.points}
               </span>
             </button>
           ) : (
@@ -131,24 +131,19 @@ function Index() {
             aria-label="Settings"
             className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground transition"
           >
-            ⚙️
+            
           </button>
         </div>
       </header>
 
       {/* Hero Visual Section matching the prototype collage */}
       <section className="flex flex-col items-center text-center my-auto py-4">
-        {/* Moon Wolf Graphic Frame */}
-        <div className="relative mb-5 flex h-48 w-48 sm:h-56 sm:w-56 items-center justify-center">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-b from-blue-500/20 to-red-500/20 blur-xl" />
-          <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-border bg-black/40 shadow-[0_0_40px_rgba(0,0,0,0.8)]">
-            <img
-              src="/cards/hero-moon.jpg"
-              alt="Mafia Wolf Moon"
-              className="h-full w-full object-cover scale-105"
-            />
-          </div>
-        </div>
+        <img
+          src="/logo.png"
+          alt="THE MAFIA"
+          className="mb-4 h-40 w-40 object-contain drop-shadow-2xl sm:h-48 sm:w-48"
+          fetchPriority="high"
+        />
 
         <h1 className="wordmark text-4xl sm:text-5xl font-black tracking-wider text-foreground">
           MAFIA
@@ -157,50 +152,26 @@ function Index() {
           {lang === "ar" ? "لا تثق بأحد" : "TRUST NO ONE"}
         </p>
 
-        {/* 4 Characteristic Role Tiles */}
-        <div className="mt-6 grid grid-cols-4 gap-2 w-full max-w-xs">
-          {[
-            {
-              key: "WOLF" as RoleKey,
-              label: lang === "ar" ? "ذئب" : "WOLF",
-              icon: "🐺",
-              color: "#ef4444",
-            },
-            {
-              key: "DETECTIVE" as RoleKey,
-              label: lang === "ar" ? "محقق" : "DETECTIVE",
-              icon: "🕵️",
-              color: "#3b82f6",
-            },
-            {
-              key: "DOCTOR" as RoleKey,
-              label: lang === "ar" ? "طبيب" : "DOCTOR",
-              icon: "➕",
-              color: "#10b981",
-            },
-            {
-              key: "CIVILIAN" as RoleKey,
-              label: lang === "ar" ? "مدني" : "CIVILIAN",
-              icon: "👤",
-              color: "#eab308",
-            },
-          ].map((r) => (
-            <div
-              key={r.key}
-              className="flex flex-col items-center justify-center rounded-2xl border p-2.5 transition-transform hover:scale-105"
-              style={{
-                borderColor: `${r.color}40`,
-                backgroundColor: `${r.color}15`,
-              }}
+        {/* Real role cards */}
+        <div className="mt-6 grid w-full max-w-xs grid-cols-4 gap-2">
+          {(["CIVILIAN", "DOCTOR", "DETECTIVE", "WOLF"] as RoleKey[]).map((k) => (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setShowSettings(true)}
+              className="group overflow-hidden rounded-xl border border-border bg-card shadow-md transition-transform hover:-translate-y-0.5"
             >
-              <span className="text-xl">{r.icon}</span>
-              <span
-                className="mt-1.5 text-[9px] font-black tracking-wider uppercase"
-                style={{ color: r.color }}
-              >
-                {r.label}
+              <img
+                src={ROLES[k].art}
+                alt={t(`role.${k}.label`)}
+                className="aspect-[5/7] w-full object-cover"
+                loading="eager"
+                decoding="async"
+              />
+              <span className="block py-1 text-[10px] font-semibold tracking-wide text-foreground">
+                {t(`role.${k}.label`)}
               </span>
-            </div>
+            </button>
           ))}
         </div>
 
@@ -299,7 +270,7 @@ function Index() {
               aria-label="Close"
               className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-foreground/10 text-foreground"
             >
-              ✕
+              
             </button>
             <AuthPanel />
           </div>

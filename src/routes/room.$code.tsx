@@ -264,7 +264,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             aria-label="Back"
             className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            ❮
+            
           </button>
           <img
             src="/logo.png"
@@ -279,7 +279,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                 title="Copy Room Code"
                 className="text-[10px] text-muted-foreground hover:text-foreground"
               >
-                {copied ? "✓" : "📋"}
+                {copied ? "" : ""}
               </button>
             </div>
             {room.status === "IN_PROGRESS" && (
@@ -295,7 +295,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
           {/* Phase Countdown Timer */}
           {room.phase_ends_at && room.status === "IN_PROGRESS" && phase !== "DAY_CONCLUSION" && (
             <div className="flex items-center gap-1 rounded-full bg-foreground/5 border border-border px-2.5 py-0.5 text-xs font-bold tabular-nums text-foreground">
-              <span>⏱️</span>
+              <span>⏱</span>
               <span>{secondsLeft}s</span>
             </div>
           )}
@@ -310,7 +310,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                 : "border-primary/40 bg-primary/20 text-foreground"
             }`}
           >
-            {narratorMuted ? "🔇" : "🔊"}
+            {narratorMuted ? "" : ""}
           </button>
 
           {/* WhatsApp-Style Group Voice Call Button (Pillar 4) */}
@@ -326,7 +326,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                 : "border-border bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
             }`}
           >
-            <span>📞</span>
+            
             <span className="text-[10px]">
               {call.inCall ? `Live · ${call.peerCount + 1}` : "Call"}
             </span>
@@ -354,7 +354,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             aria-label="Settings"
             className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            ⚙️
+            
           </button>
         </div>
       </header>
@@ -387,13 +387,13 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             </p>
             <div className="mt-2.5 grid grid-cols-3 gap-2">
               {[
-                { id: "ONLINE" as const, label: lang === "ar" ? "أونلاين" : "Online", icon: "🌐" },
+                { id: "ONLINE" as const, label: lang === "ar" ? "أونلاين" : "Online", icon: "" },
                 {
                   id: "HYBRID" as const,
                   label: lang === "ar" ? "مختلط (روبوتات)" : "Hybrid (Bots)",
-                  icon: "👥",
+                  icon: "",
                 },
-                { id: "SOLO" as const, label: lang === "ar" ? "فردي" : "Solo", icon: "🤖" },
+                { id: "SOLO" as const, label: lang === "ar" ? "فردي" : "Solo", icon: "" },
               ].map((m) => (
                 <button
                   key={m.id}
@@ -488,7 +488,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
               onClick={copyCode}
               className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-foreground/5 px-4 py-1.5 text-xs font-semibold text-foreground hover:bg-foreground/10"
             >
-              <span>{copied ? "✓ Copied!" : "🔗 Share Code"}</span>
+              <span>{copied ? " Copied!" : " Share Code"}</span>
             </button>
           </div>
         </section>
@@ -498,7 +498,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
       {room.status === "FINISHED" && (
         <section className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center text-center">
           <div className="relative">
-            <span className="text-6xl">{room.winner === "WOLVES" ? "🐺" : "🏆"}</span>
+            <span className="text-6xl">{room.winner === "WOLVES" ? "" : ""}</span>
           </div>
 
           <h2 className="mt-3 text-3xl font-black uppercase tracking-wider text-foreground">
@@ -515,7 +515,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
               onClick={() => setShowProfile(true)}
               className="rounded-xl border border-border bg-foreground/5 px-4 py-2.5 text-xs font-bold text-foreground hover:bg-foreground/10"
             >
-              📊 {lang === "ar" ? "سجل الرتبة والنقاط" : "Syndicate Hierarchy"}
+               {lang === "ar" ? "سجل الرتبة والنقاط" : "Syndicate Hierarchy"}
             </button>
             <Link
               to="/"
@@ -554,7 +554,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                   }`}
                 >
                   <span>{lang === "ar" ? "قناة الذئاب" : "Wolf Pack"}</span>
-                  <span>🔒</span>
+                  
                 </button>
               )}
 
@@ -581,12 +581,12 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
               >
                 <span>
                   {myRole === "WOLF"
-                    ? "🐺"
+                    ? ""
                     : myRole === "DETECTIVE"
-                      ? "🕵️"
+                      ? ""
                       : myRole === "DOCTOR"
-                        ? "➕"
-                        : "👤"}
+                        ? ""
+                        : ""}
                 </span>
                 <span>{t(`role.${myRole}.label`)}</span>
               </button>

@@ -89,7 +89,7 @@ function RecorderAndSwipeUp({
           className="pointer-events-none absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1 shadow-lg shadow-emerald-500/40 text-[10px] font-bold text-black"
           style={{ transform: `translate(-50%, -${dragOffset * 0.7}px)` }}
         >
-          <span>📞</span>
+          
           <span className="h-1.5 w-1.5 rounded-full bg-black animate-ping" />
         </div>
       )}
@@ -225,7 +225,7 @@ export function Chat({
         <div className="flex min-h-full flex-col justify-end gap-2.5">
           {list.length === 0 && (
             <div className="my-auto py-8 text-center text-xs text-muted-foreground">
-              <span className="text-2xl">💬</span>
+              
               <p className="mt-2">{t("chat.empty")}</p>
             </div>
           )}
@@ -307,7 +307,7 @@ export function Chat({
               aria-label="Call icon"
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
             >
-              📞
+              
             </button>
 
             <div className="relative flex-1">

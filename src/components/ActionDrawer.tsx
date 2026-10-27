@@ -37,7 +37,7 @@ export function ActionDrawer({
   // Action styling config
   let themeColor = "#ef4444"; // red/wolf
   let themeBg = "rgba(239, 68, 68, 0.15)";
-  let actionIcon = "💀";
+  let actionIcon = "";
   let actionTitle = lang === "ar" ? "الذئاب" : lang === "fr" ? "Les Loups" : "Wolves";
   let actionPrompt =
     lang === "ar" ? "اختر الضحية" : lang === "fr" ? "Choisis une victime" : "Choose a victim";
@@ -51,7 +51,7 @@ export function ActionDrawer({
   if (isDoctorPhase) {
     themeColor = "#10b981"; // emerald/green
     themeBg = "rgba(16, 185, 129, 0.15)";
-    actionIcon = "💉";
+    actionIcon = "";
     actionTitle = lang === "ar" ? "الطبيب" : lang === "fr" ? "Le Médecin" : "Doctor";
     actionPrompt =
       lang === "ar"
@@ -68,7 +68,7 @@ export function ActionDrawer({
   } else if (isDetectivePhase) {
     themeColor = "#3b82f6"; // blue/cyan
     themeBg = "rgba(59, 130, 246, 0.15)";
-    actionIcon = "🔍";
+    actionIcon = "";
     actionTitle = lang === "ar" ? "المحقق" : lang === "fr" ? "Le Détective" : "Detective";
     actionPrompt =
       lang === "ar"
@@ -85,7 +85,7 @@ export function ActionDrawer({
   } else if (isVotingPhase) {
     themeColor = "#8b5cf6"; // violet
     themeBg = "rgba(139, 92, 246, 0.15)";
-    actionIcon = "🗳️";
+    actionIcon = "";
     actionTitle = lang === "ar" ? "التصويت العام" : lang === "fr" ? "Vote du Village" : "Town Vote";
     actionPrompt =
       lang === "ar"
@@ -131,7 +131,7 @@ export function ActionDrawer({
             aria-label="Dismiss"
             className="flex h-7 w-7 items-center justify-center rounded-full bg-foreground/5 text-xs text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            ✕
+            
           </button>
         </div>
 

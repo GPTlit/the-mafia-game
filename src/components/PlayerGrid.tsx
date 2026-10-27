@@ -67,19 +67,19 @@ export function PlayerGrid({
                     {/* Status badges */}
                     {!p.is_alive && (
                       <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-foreground shadow">
-                        ✕
+                        
                       </span>
                     )}
 
                     {p.is_host && p.is_alive && (
                       <span className="absolute -top-1 -left-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] font-bold text-black shadow">
-                        ★
+                        
                       </span>
                     )}
 
                     {isSpeaker && (
                       <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-emerald-500 px-1 text-[8px] font-bold text-black shadow animate-bounce">
-                        🎙️
+                        
                       </span>
                     )}
 
@@ -163,12 +163,12 @@ export function PlayerGrid({
                 />
                 {!p.is_alive && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-foreground">
-                    ✕
+                    
                   </span>
                 )}
                 {p.is_host && (
                   <span className="absolute -top-1 -left-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] font-bold text-black shadow">
-                    ★
+                    
                   </span>
                 )}
                 {showReady && p.is_alive && (

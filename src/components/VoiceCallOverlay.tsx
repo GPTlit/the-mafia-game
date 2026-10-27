@@ -158,7 +158,7 @@ export function VoiceCallOverlay({
                   className="h-12 w-12 rounded-full border border-border bg-secondary object-cover"
                 />
                 <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-black/80 border border-border text-[9px] text-emerald-400">
-                  {idx === 2 ? "🔇" : "🎙️"}
+                  {idx === 2 ? "" : ""}
                 </span>
               </div>
               <span className="w-14 truncate text-center text-[10px] font-medium text-muted-foreground">

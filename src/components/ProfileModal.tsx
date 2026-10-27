@@ -82,7 +82,7 @@ export function ProfileModal({
         {/* Modal Top Bar */}
         <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4">
           <div className="flex items-center gap-2">
-            <span className="text-lg">👑</span>
+            <span className="text-lg"></span>
             <h2 className="text-sm font-bold text-foreground tracking-wide uppercase">
               {lang === "ar"
                 ? "الهيكل التنظيمي للمافيا"
@@ -96,7 +96,7 @@ export function ProfileModal({
             aria-label="Close"
             className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            ✕
+            
           </button>
         </div>
 
@@ -111,7 +111,7 @@ export function ProfileModal({
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            {lang === "ar" ? "📊 الرتبة والإحصائيات" : "📊 Hierarchy & Stats"}
+            {lang === "ar" ? " الرتبة والإحصائيات" : " Hierarchy & Stats"}
           </button>
           <button
             type="button"
@@ -122,7 +122,7 @@ export function ProfileModal({
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            {lang === "ar" ? "📜 سجل المباريات" : "📜 Match History"}
+            {lang === "ar" ? " سجل المباريات" : " Match History"}
           </button>
         </div>
 
@@ -310,7 +310,7 @@ export function ProfileModal({
             <div className="space-y-2.5">
               {history.length === 0 ? (
                 <div className="py-12 text-center text-xs text-muted-foreground">
-                  <span className="text-2xl">📜</span>
+                  
                   <p className="mt-2">
                     {lang === "ar" ? "لا توجد مباريات مسجلة بعد." : "No matches recorded yet."}
                   </p>
@@ -334,7 +334,7 @@ export function ProfileModal({
                             color: m.won ? "#10b981" : "#ef4444",
                           }}
                         >
-                          {m.won ? "🏆" : "💀"}
+                          {m.won ? "" : ""}
                         </div>
                         <div>
                           <div className="flex items-center gap-1.5">
