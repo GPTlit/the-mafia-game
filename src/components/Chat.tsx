@@ -145,6 +145,7 @@ export function Chat({
   actionSlot,
   onSent,
   onOpenVoiceCall,
+  feedOverride,
 }: {
   roomId: string;
   channel: ChatMessage["channel"];
@@ -158,6 +159,7 @@ export function Chat({
   actionSlot?: ReactNode;
   onSent?: () => void;
   onOpenVoiceCall?: () => void;
+  feedOverride?: ReactNode;
 }) {
   const { lang, t } = useI18n();
   const [text, setText] = useState("");
@@ -209,7 +211,9 @@ export function Chat({
 
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-      {/* Scrollable Chat Feed */}
+      {feedOverride ? (
+        <div className="min-h-0 flex-1 overflow-y-auto">{feedOverride}</div>
+      ) : (
       <div
         ref={scroller}
         onScroll={(e) => {
@@ -289,6 +293,7 @@ export function Chat({
           })}
         </div>
       </div>
+      )}
 
       {actionSlot}
 

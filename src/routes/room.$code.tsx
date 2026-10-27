@@ -7,6 +7,8 @@ import { api, phaseKey, type Player } from "@/lib/game";
 import { useI18n, type TFunc } from "@/lib/i18n";
 import { GameCard, ROLES, type RoleKey } from "@/lib/roles";
 import { PlayerGrid } from "@/components/PlayerGrid";
+import { SeatTable } from "@/components/SeatTable";
+import { useChatStyle } from "@/lib/chatStyle";
 import { Chat } from "@/components/Chat";
 import { ActionDrawer } from "@/components/ActionDrawer";
 import { VoiceCallOverlay } from "@/components/VoiceCallOverlay";
@@ -88,6 +90,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
 
   const { state, messages, error, refresh } = useRoom(roomId);
   const secondsLeft = useCountdown(state?.room.phase_ends_at);
+  const chatStyle = useChatStyle();
 
   const [actionError, setActionError] = useState<string | null>(null);
   const [cardOpen, setCardOpen] = useState(true);
@@ -357,6 +360,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
       </header>
 
       {/* Compact Horizontal Table Strip (Pillar 3 & Pillar 2) */}
+      {!(room.status === "IN_PROGRESS" && chatStyle === "bubbles") && (
       <section className="shrink-0 border-b border-border bg-card/90 px-2 py-1.5">
         <PlayerGrid
           compact
@@ -371,6 +375,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
           onSelect={handlePlayerTap}
         />
       </section>
+      )}
 
       {/* Main View Area */}
       {room.status === "LOBBY" && (
@@ -598,6 +603,22 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             anonymous={tab === "WOLF_PRIVATE"}
             canWrite={me.is_alive}
             onSent={refresh}
+            feedOverride={
+              chatStyle === "bubbles" && tab === "GLOBAL" ? (
+                <div className="flex h-full items-center justify-center p-2">
+                  <SeatTable
+                    players={players}
+                    meId={me.user_id}
+                    messages={messages}
+                    selectable={isActionPhase}
+                    selectedId={selectedTargetPlayer?.user_id ?? null}
+                    speakerId={phase === "DAY_DISCUSSION" ? speaker_id : null}
+                    voteCounts={phase === "DAY_VOTING" ? voteCounts : {}}
+                    onSelect={handlePlayerTap}
+                  />
+                </div>
+              ) : undefined
+            }
             onOpenVoiceCall={() => {
               if (!call.inCall) void call.join();
               setShowVoiceOverlay(true);
