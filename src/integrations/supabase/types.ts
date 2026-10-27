@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      match_history: {
+        Row: {
+          created_at: string
+          id: string
+          points_earned: number
+          rank_after: string | null
+          rank_before: string | null
+          role: string | null
+          room_id: string
+          survived: boolean
+          user_id: string
+          won: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          points_earned?: number
+          rank_after?: string | null
+          rank_before?: string | null
+          role?: string | null
+          room_id: string
+          survived?: boolean
+          user_id: string
+          won?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          points_earned?: number
+          rank_after?: string | null
+          rank_before?: string | null
+          role?: string | null
+          room_id?: string
+          survived?: boolean
+          user_id?: string
+          won?: boolean
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           audio_url: string | null
@@ -94,23 +133,47 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          detective_discoveries: number
+          doctor_saves: number
           id: string
+          matches_played: number
+          matches_won: number
           phone_number: string | null
+          points: number
+          rank_tier: string
+          town_wins: number
           username: string
+          wolf_wins: number
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          detective_discoveries?: number
+          doctor_saves?: number
           id: string
+          matches_played?: number
+          matches_won?: number
           phone_number?: string | null
+          points?: number
+          rank_tier?: string
+          town_wins?: number
           username: string
+          wolf_wins?: number
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
+          detective_discoveries?: number
+          doctor_saves?: number
           id?: string
+          matches_played?: number
+          matches_won?: number
           phone_number?: string | null
+          points?: number
+          rank_tier?: string
+          town_wins?: number
           username?: string
+          wolf_wins?: number
         }
         Relationships: []
       }
@@ -262,6 +325,7 @@ export type Database = {
         Returns: undefined
       }
       check_win: { Args: { p_room_id: string }; Returns: string }
+      claim_match_reward: { Args: { p_room_id: string }; Returns: number }
       confirm_card: { Args: { p_room_id: string }; Returns: undefined }
       create_room: { Args: never; Returns: string }
       detective_check: {
@@ -282,6 +346,7 @@ export type Database = {
       }
       open_voting: { Args: { p_room_id: string }; Returns: undefined }
       pass_turn: { Args: { p_room_id: string }; Returns: undefined }
+      rank_for: { Args: { p: number }; Returns: string }
       ready_to_vote: {
         Args: { p_ready: boolean; p_room_id: string }
         Returns: undefined
