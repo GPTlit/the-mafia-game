@@ -3,25 +3,28 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useSession";
 import { AuthPanel } from "@/components/AuthPanel";
-import { api } from "@/lib/game";
-import { GameCard, ROLES, WolfSigil, type RoleKey } from "@/lib/roles";
-import { ThemeToggle } from "@/lib/theme";
-import { LanguageSwitcher, useI18n } from "@/lib/i18n";
+import { ProfileModal } from "@/components/ProfileModal";
+import { SettingsDrawer } from "@/components/SettingsDrawer";
+import { api, AVATARS } from "@/lib/game";
+import { fetchProfileStats, getRankTier, type ProfileStats } from "@/lib/profile";
+import { ROLES, type RoleKey } from "@/lib/roles";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Wolf Night — Social Deduction Game for 6-15 Players" },
+      { title: "THE MAFIA — Trust No One" },
       {
         name: "description",
         content:
-          "Play Wolf Night with friends: wolves hunt at night, the detective investigates, the doctor heals, and the town votes by day.",
+          "Multiplayer social deduction game: wolves hunt at night, the detective investigates, the doctor heals, and the town votes by day. Talk · Trust · Survive.",
       },
-      { property: "og:title", content: "Wolf Night — Social Deduction Game" },
+      { property: "og:title", content: "THE MAFIA — Trust No One" },
       {
         property: "og:description",
         content: "Create a room, invite 6-15 players, and survive the night.",
       },
+      { property: "og:image", content: "/logo.png" },
     ],
   }),
   component: Index,
@@ -29,25 +32,29 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { t } = useI18n();
+  const { lang, t } = useI18n();
   const { session, loading } = useSession();
   const navigate = useNavigate();
+
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [username, setUsername] = useState<string | null>(null);
+  const [profileStats, setProfileStats] = useState<ProfileStats | null>(null);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<"lobby" | "modes" | "join">("lobby");
 
   useEffect(() => {
     if (!session) return;
-    void supabase
-      .from("profiles")
-      .select("username")
-      .eq("id", session.user.id)
-      .maybeSingle()
-      .then(({ data }) => setUsername(data?.username ?? null));
+    void fetchProfileStats(session.user.id).then(setProfileStats);
   }, [session]);
 
   async function create() {
+    if (!session) {
+      setShowAuthModal(true);
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
@@ -60,6 +67,10 @@ function Index() {
   }
 
   async function join() {
+    if (!session) {
+      setShowAuthModal(true);
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
@@ -71,118 +82,240 @@ function Index() {
     }
   }
 
-  if (loading) {
-    return (
-      <main className="flex min-h-screen items-center justify-center text-muted-foreground">
-        Loading…
-      </main>
-    );
-  }
-
-  if (!session) {
-    return (
-      <main className="min-h-screen px-4 py-10">
-        <div className="mx-auto mb-4 flex max-w-sm justify-end">
-          <div className="flex items-center gap-2">
-            <LanguageSwitcher />
-            <ThemeToggle />
-          </div>
-        </div>
-        <AuthPanel />
-        <section className="mx-auto mt-10 max-w-sm">
-          <p className="display text-center text-[11px] tracking-widest text-muted-foreground uppercase">
-            {t("home.fourCards")}
-          </p>
-          <div className="mt-3 grid grid-cols-4 gap-2">
-            {(Object.keys(ROLES) as RoleKey[]).map((r) => (
-              <GameCard key={r} role={r} compact />
-            ))}
-          </div>
-        </section>
-      </main>
-    );
-  }
+  const rankTier = profileStats ? getRankTier(profileStats.points) : null;
 
   return (
-    <main className="mx-auto min-h-screen max-w-sm px-4 py-10">
+    <main className="mx-auto flex min-h-[100dvh] max-w-md flex-col justify-between px-4 py-5 select-none">
+      {/* Top Navigation Bar */}
       <header className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <WolfSigil className="h-7 w-9 text-primary" />
-          <h1 className="display text-2xl font-bold uppercase">Wolf Night</h1>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
-            <LanguageSwitcher />
-            <ThemeToggle />
+        <div className="flex items-center gap-2.5">
+          <img
+            src="/logo.png"
+            alt="THE MAFIA"
+            className="h-10 w-10 rounded-2xl border border-red-500/30 object-cover shadow-lg shadow-red-950/40"
+          />
+          <div>
+            <span className="wordmark text-lg font-black tracking-wider text-white">MAFIA</span>
+            <p className="text-[9px] font-bold tracking-[0.2em] text-red-500 uppercase">
+              {lang === "ar" ? "لا تثق بأحد" : "TRUST NO ONE"}
+            </p>
           </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {session && profileStats ? (
+            <button
+              onClick={() => setShowProfile(true)}
+              className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 py-1 ps-1.5 pe-3 text-xs font-semibold text-white shadow hover:bg-white/10 transition"
+            >
+              <img
+                src={profileStats.avatar_url || AVATARS[0]!}
+                alt="Profile"
+                className="h-6 w-6 rounded-full border border-white/20 object-cover"
+              />
+              <span className="text-[11px] font-bold" style={{ color: rankTier?.color }}>
+                {rankTier?.badge} {profileStats.points}
+              </span>
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowAuthModal(true)}
+              className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold text-white hover:bg-white/20 transition"
+            >
+              {lang === "ar" ? "تسجيل الدخول" : "Sign In"}
+            </button>
+          )}
+
           <button
-            onClick={() => void supabase.auth.signOut()}
-            className="text-xs text-muted-foreground underline"
+            onClick={() => setShowSettings(true)}
+            aria-label="Settings"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white transition"
           >
-            {t("nav.signOut")}
+            ⚙️
           </button>
         </div>
       </header>
 
-      <p className="mt-4 text-sm text-muted-foreground">
-        {t("home.welcome", { name: username ? `, ${username}` : "" })}
-      </p>
-
-      <div className="panel mt-6 p-5">
-        <h2 className="display text-sm font-bold tracking-widest uppercase">{t("home.host")}</h2>
-        <p className="mt-1 text-xs text-muted-foreground">{t("home.hostHint")}</p>
-        <button
-          onClick={() => void create()}
-          disabled={busy}
-          className="display mt-4 w-full rounded-md bg-primary px-4 py-3 text-sm font-bold tracking-widest text-primary-foreground uppercase disabled:opacity-50"
-        >
-          {t("home.create")}
-        </button>
-      </div>
-
-      <div className="panel mt-4 p-5">
-        <h2 className="display text-sm font-bold tracking-widest uppercase">{t("home.join")}</h2>
-        <div className="mt-3 flex gap-2">
-          <input
-            value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
-            placeholder={t("home.code")}
-            maxLength={5}
-            className="display flex-1 rounded-md border border-input bg-secondary px-3 py-2.5 tracking-[0.3em] outline-none focus:border-primary"
-          />
-          <button
-            onClick={() => void join()}
-            disabled={busy || code.trim().length < 4}
-            className="display rounded-md border border-primary px-4 text-xs font-bold tracking-widest text-primary uppercase disabled:opacity-40"
-          >
-            {t("home.joinCta")}
-          </button>
+      {/* Hero Visual Section matching the prototype collage */}
+      <section className="flex flex-col items-center text-center my-auto py-4">
+        {/* Moon Wolf Graphic Frame */}
+        <div className="relative mb-5 flex h-48 w-48 sm:h-56 sm:w-56 items-center justify-center">
+          <div className="absolute inset-0 rounded-full bg-gradient-to-b from-blue-500/20 to-red-500/20 blur-xl" />
+          <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-white/15 bg-black/40 shadow-[0_0_40px_rgba(0,0,0,0.8)]">
+            <img
+              src="/cards/hero-moon.jpg"
+              alt="Mafia Wolf Moon"
+              className="h-full w-full object-cover scale-105"
+            />
+          </div>
         </div>
-      </div>
 
-      {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
-
-      <div className="panel mt-4 p-5">
-        <h2 className="display text-sm font-bold tracking-widest uppercase">{t("home.offline")}</h2>
-        <p className="mt-1 text-xs text-muted-foreground">{t("home.offlineHint")}</p>
-        <Link
-          to="/offline"
-          className="display mt-4 block rounded-md border border-primary px-4 py-3 text-center text-sm font-bold tracking-widest text-primary uppercase"
-        >
-          {t("home.offlinePlay")}
-        </Link>
-      </div>
-
-      <section className="mt-8">
-        <p className="display text-[11px] tracking-widest text-muted-foreground uppercase">
-          {t("home.fourCards")}
+        <h1 className="wordmark text-4xl sm:text-5xl font-black tracking-wider text-white">
+          MAFIA
+        </h1>
+        <p className="mt-1 text-xs font-bold tracking-[0.25em] text-red-500 uppercase">
+          {lang === "ar" ? "لا تثق بأحد" : "TRUST NO ONE"}
         </p>
-        <div className="mt-3 grid grid-cols-4 gap-2">
-          {(Object.keys(ROLES) as RoleKey[]).map((r) => (
-            <GameCard key={r} role={r} compact />
+
+        {/* 4 Characteristic Role Tiles */}
+        <div className="mt-6 grid grid-cols-4 gap-2 w-full max-w-xs">
+          {[
+            {
+              key: "WOLF" as RoleKey,
+              label: lang === "ar" ? "ذئب" : "WOLF",
+              icon: "🐺",
+              color: "#ef4444",
+            },
+            {
+              key: "DETECTIVE" as RoleKey,
+              label: lang === "ar" ? "محقق" : "DETECTIVE",
+              icon: "🕵️",
+              color: "#3b82f6",
+            },
+            {
+              key: "DOCTOR" as RoleKey,
+              label: lang === "ar" ? "طبيب" : "DOCTOR",
+              icon: "➕",
+              color: "#10b981",
+            },
+            {
+              key: "CIVILIAN" as RoleKey,
+              label: lang === "ar" ? "مدني" : "CIVILIAN",
+              icon: "👤",
+              color: "#eab308",
+            },
+          ].map((r) => (
+            <div
+              key={r.key}
+              className="flex flex-col items-center justify-center rounded-2xl border p-2.5 transition-transform hover:scale-105"
+              style={{
+                borderColor: `${r.color}40`,
+                backgroundColor: `${r.color}15`,
+              }}
+            >
+              <span className="text-xl">{r.icon}</span>
+              <span
+                className="mt-1.5 text-[9px] font-black tracking-wider uppercase"
+                style={{ color: r.color }}
+              >
+                {r.label}
+              </span>
+            </div>
           ))}
         </div>
+
+        <p className="mt-5 text-xs font-medium text-muted-foreground tracking-wide">
+          {lang === "ar" ? "تكلّم · ثِق · انجُ" : "Talk · Trust · Survive"}
+        </p>
+
+        {/* Big Play CTA */}
+        <div className="mt-6 w-full max-w-xs space-y-2.5">
+          <button
+            onClick={() => {
+              if (!session) setShowAuthModal(true);
+              else void create();
+            }}
+            disabled={busy}
+            className="w-full rounded-2xl bg-white py-3.5 text-sm font-black tracking-widest uppercase text-black shadow-xl shadow-white/10 transition-all hover:bg-neutral-200 active:scale-95 disabled:opacity-50"
+          >
+            {busy ? t("common.wait") : lang === "ar" ? "العب الآن" : "Play Now"}
+          </button>
+
+          <div className="flex gap-2">
+            <button
+              onClick={() => setActiveTab(activeTab === "join" ? "lobby" : "join")}
+              className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-xs font-bold text-white hover:bg-white/10 transition"
+            >
+              {lang === "ar" ? "انضمام برمز" : "Join Code"}
+            </button>
+            <Link
+              to="/offline"
+              className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-xs font-bold text-center text-white hover:bg-white/10 transition"
+            >
+              {lang === "ar" ? "تدريب فردي" : "Solo Practice"}
+            </Link>
+          </div>
+        </div>
+
+        {/* Join drawer/input if clicked */}
+        {activeTab === "join" && (
+          <div className="mt-4 flex w-full max-w-xs gap-2 animate-in fade-in">
+            <input
+              value={code}
+              onChange={(e) => setCode(e.target.value.toUpperCase())}
+              placeholder={lang === "ar" ? "رمز الغرفة" : "ROOM CODE"}
+              maxLength={5}
+              className="flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-center text-sm font-bold tracking-[0.25em] text-white outline-none focus:border-red-500"
+            />
+            <button
+              onClick={() => void join()}
+              disabled={busy || code.trim().length < 4}
+              className="rounded-xl bg-red-600 px-4 text-xs font-bold uppercase text-white disabled:opacity-40"
+            >
+              {lang === "ar" ? "انضم" : "Join"}
+            </button>
+          </div>
+        )}
+
+        {error && <p className="mt-3 text-xs text-red-400">{error}</p>}
       </section>
+
+      {/* Modes & Role Rules Bottom Sheet Card */}
+      <section className="mt-auto rounded-3xl border border-white/10 bg-black/40 p-4 backdrop-blur-md">
+        <div className="flex items-center justify-between pb-2 border-b border-white/5">
+          <span className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
+            {lang === "ar" ? "أنماط اللعب والأدوار" : "Game Modes & Roles"}
+          </span>
+          <button
+            onClick={() => setShowSettings(true)}
+            className="text-[11px] font-semibold text-red-400 underline"
+          >
+            {lang === "ar" ? "عرض التفاصيل" : "View Details"}
+          </button>
+        </div>
+
+        <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-2">
+            <p className="text-[11px] font-bold text-white">4–5</p>
+            <p className="mt-0.5 text-[9px] text-muted-foreground">1 Wolf · 1 Det · 1 Doc</p>
+          </div>
+          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-2">
+            <p className="text-[11px] font-bold text-white">6–8</p>
+            <p className="mt-0.5 text-[9px] text-muted-foreground">2 Wolves · 1 Det · 1 Doc</p>
+          </div>
+          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-2">
+            <p className="text-[11px] font-bold text-white">9+</p>
+            <p className="mt-0.5 text-[9px] text-muted-foreground">3 Wolves · Remainder Civ</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Modals & Drawers */}
+      {showAuthModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 backdrop-blur-sm animate-in fade-in">
+          <div className="relative w-full max-w-sm">
+            <button
+              onClick={() => setShowAuthModal(false)}
+              aria-label="Close"
+              className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white"
+            >
+              ✕
+            </button>
+            <AuthPanel />
+          </div>
+        </div>
+      )}
+
+      {showProfile && session && profileStats && (
+        <ProfileModal
+          userId={session.user.id}
+          username={profileStats.username}
+          avatarUrl={profileStats.avatar_url}
+          onClose={() => setShowProfile(false)}
+        />
+      )}
+
+      <SettingsDrawer isOpen={showSettings} onClose={() => setShowSettings(false)} />
     </main>
   );
 }

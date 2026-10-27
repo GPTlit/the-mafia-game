@@ -65,7 +65,7 @@ export function WolfSigil({
 }) {
   return (
     <img
-      src={logoAsset.url}
+      src="/logo.png"
       alt="THE MAFIA"
       className={`rounded-lg object-cover ${className ?? ""}`}
       style={{ aspectRatio: "1 / 1", width: "auto", ...style }}

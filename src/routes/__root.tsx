@@ -92,6 +92,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "preload", href: "/logo.png", as: "image" },
+      { rel: "preload", href: "/cards/card-wolf.png", as: "image" },
+      { rel: "preload", href: "/cards/card-detective.png", as: "image" },
+      { rel: "preload", href: "/cards/card-doctor.png", as: "image" },
+      { rel: "preload", href: "/cards/card-civilian.png", as: "image" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",

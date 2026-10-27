@@ -268,13 +268,20 @@ export function localizeServerText(text: string, t: T, players: { username: stri
   const findName = (upper: string) =>
     players.find((p) => p.username.toUpperCase() === upper)?.username ?? upper;
   let m: RegExpMatchArray | null;
-  if ((m = s.match(/^Night (\d+) begins\. Everyone goes to sleep\.$/))) return t("op.night", { n: m[1]! });
+  if ((m = s.match(/^Night (\d+) begins\. Everyone goes to sleep\.$/)))
+    return t("op.night", { n: m[1]! });
   if (s === "The night falls. Roles have been distributed.") return t("op.dealt");
   if (s === "VOTING IS OPEN. YOU HAVE ONE MINUTE.") return t("op.votingOpen");
-  if ((m = s.match(/^DAY (\d+): EACH LIVING PLAYER HAS ONE MINUTE TO SPEAK\.$/))) return t("op.day", { n: m[1]! });
-  if (s === "OPEN DISCUSSION. THE VOTE OPENS WHEN THE MAJORITY IS READY.") return t("op.conclusion");
+  if ((m = s.match(/^DAY (\d+): EACH LIVING PLAYER HAS ONE MINUTE TO SPEAK\.$/)))
+    return t("op.day", { n: m[1]! });
+  if (s === "OPEN DISCUSSION. THE VOTE OPENS WHEN THE MAJORITY IS READY.")
+    return t("op.conclusion");
   if (s === "THE WOLFS CAME LAST NIGHT, BUT NOBODY WAS KILLED.") return t("op.noKill");
-  if ((m = s.match(/^THE WOLFS CAME LAST NIGHT, AND THEY KILLED (.+)\. (BUT THE DOCTOR SAVED HIM!|SADLY THE DOCTOR DID NOT SAVE HIM\.)$/)))
+  if (
+    (m = s.match(
+      /^THE WOLFS CAME LAST NIGHT, AND THEY KILLED (.+)\. (BUT THE DOCTOR SAVED HIM!|SADLY THE DOCTOR DID NOT SAVE HIM\.)$/,
+    ))
+  )
     return t("op.killed", {
       name: findName(m[1]!),
       saved: m[2]!.startsWith("BUT") ? t("op.saved") : t("op.notSaved"),

@@ -147,7 +147,11 @@
   --sidebar-accent-foreground: oklch(0.93 0.006 255);
   --sidebar-border: oklch(0.3 0.03 260);
   --shadow-card: 0 18px 45px -14px oklch(0 0 0 / 70%);
-  --gradient-night: radial-gradient(120% 70% at 50% 0%, oklch(0.22 0.035 258), oklch(0.15 0.022 262) 70%);
+  --gradient-night: radial-gradient(
+    120% 70% at 50% 0%,
+    oklch(0.22 0.035 258),
+    oklch(0.15 0.022 262) 70%
+  );
 }
 
 @layer base {

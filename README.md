@@ -1,14 +1,12 @@
 # Secret Society Social
 
-Card in photo uploaded 1 is wolf 
+Card in photo uploaded 1 is wolf
 
-Card in photo uploaded 2 is detective 
+Card in photo uploaded 2 is detective
 
-Card in photo uploaded 3 is doctor 
+Card in photo uploaded 3 is doctor
 
-Card in photo uploaded 4 is civilian 
-
- 
+Card in photo uploaded 4 is civilian
 
 Here is the complete architectural and functional blueprint designed to feed directly into Lovable. It covers database schemas, state machines, role distributions, timer loops, and step-by-step game phases.
 

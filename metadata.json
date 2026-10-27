@@ -1,0 +1,6 @@
+{
+  "name": "The Mafia - Trust No One",
+  "description": "Multiplayer mafia social deduction game with real-time roles, night phases, day discussions, voting, multilingual voice narrator, and WhatsApp-style audio calls.",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

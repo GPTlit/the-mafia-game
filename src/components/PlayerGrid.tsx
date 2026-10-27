@@ -7,6 +7,7 @@ export function PlayerGrid({
   meId,
   selectable = false,
   selectedId = null,
+  selectionColor = "#ef4444",
   voteCounts = {},
   onSelect,
   showReady = false,
@@ -17,132 +18,185 @@ export function PlayerGrid({
   meId: string;
   selectable?: boolean;
   selectedId?: string | null;
+  selectionColor?: string;
   voteCounts?: Record<string, number>;
   onSelect?: (id: string) => void;
   showReady?: boolean;
   speakerId?: string | null;
   compact?: boolean;
 }) {
-  const { t } = useI18n();
+  const { lang, t } = useI18n();
 
   if (compact) {
     return (
-      <ul className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
-        {players.map((p) => {
-          const role = p.role as RoleKey | null;
-          const disabled = !selectable || !p.is_alive;
-          return (
-            <li key={p.user_id} className="shrink-0">
-              <button
-                type="button"
-                disabled={disabled}
-                onClick={() => onSelect?.(p.user_id)}
-                className={`w-16 rounded-xl border px-1 py-1.5 text-center transition-colors ${
-                  selectedId === p.user_id
-                    ? "border-primary bg-primary/15"
-                    : "border-border bg-card"
-                } ${p.is_alive ? "" : "opacity-40"} ${disabled ? "cursor-default" : "hover:border-primary"}`}
-              >
-                <div className="relative mx-auto h-9 w-9">
-                  <img
-                    src={p.avatar_url ?? ""}
-                    alt={p.username}
-                    className="h-9 w-9 rounded-full border border-border bg-secondary object-cover"
-                  />
-                  {speakerId === p.user_id && (
-                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-accent px-1 text-[8px] font-bold text-accent-foreground">
-                      {t("state.mic")}
+      <div className="w-full overflow-x-auto py-1 scrollbar-none">
+        <ul className="flex items-center gap-2.5 px-1 min-w-max">
+          {players.map((p) => {
+            const role = p.role as RoleKey | null;
+            const disabled = !selectable || !p.is_alive;
+            const isSelected = selectedId === p.user_id;
+            const isMe = p.user_id === meId;
+            const isSpeaker = speakerId === p.user_id;
+            const votes = voteCounts[p.user_id];
+
+            return (
+              <li key={p.user_id} className="shrink-0">
+                <button
+                  type="button"
+                  disabled={disabled}
+                  onClick={() => onSelect?.(p.user_id)}
+                  className={`flex flex-col items-center gap-1 rounded-2xl p-1.5 transition-all ${
+                    isSelected ? "scale-105 bg-white/10 ring-2" : "hover:bg-white/5 active:scale-95"
+                  } ${!p.is_alive ? "opacity-40 grayscale" : ""}`}
+                  style={{
+                    ringColor: isSelected ? selectionColor : "transparent",
+                    boxShadow: isSelected ? `0 0 16px ${selectionColor}40` : "none",
+                  }}
+                >
+                  <div className="relative">
+                    {/* Ring highlight when speaking or selected */}
+                    {isSpeaker && (
+                      <span className="absolute -inset-1 rounded-full border-2 border-emerald-400 animate-pulse" />
+                    )}
+                    <img
+                      src={p.avatar_url ?? ""}
+                      alt={p.username}
+                      className="h-11 w-11 rounded-full border border-white/15 bg-secondary object-cover"
+                    />
+
+                    {/* Status badges */}
+                    {!p.is_alive && (
+                      <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow">
+                        ✕
+                      </span>
+                    )}
+
+                    {p.is_host && p.is_alive && (
+                      <span className="absolute -top-1 -left-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] font-bold text-black shadow">
+                        ★
+                      </span>
+                    )}
+
+                    {isSpeaker && (
+                      <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-emerald-500 px-1 text-[8px] font-bold text-black shadow animate-bounce">
+                        🎙️
+                      </span>
+                    )}
+
+                    {votes ? (
+                      <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[9px] font-bold text-white shadow">
+                        {votes}
+                      </span>
+                    ) : null}
+
+                    {/* Ready status dot in lobby */}
+                    {showReady && p.is_alive && (
+                      <span
+                        className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-background ${
+                          p.is_ready ? "bg-emerald-400" : "bg-neutral-500"
+                        }`}
+                      />
+                    )}
+                  </div>
+
+                  {/* Name label */}
+                  <span className="w-14 truncate text-center text-[10px] font-bold text-white">
+                    {isMe ? (lang === "ar" ? "أنت" : "You") : p.username}
+                  </span>
+
+                  {/* Subtitle / role / bot */}
+                  {role ? (
+                    <span
+                      className="text-[8px] font-bold tracking-tight uppercase"
+                      style={{ color: ROLES[role]?.tone }}
+                    >
+                      {t(`role.${role}.label`)}
                     </span>
-                  )}
-                  {voteCounts[p.user_id] ? (
-                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
-                      {voteCounts[p.user_id]}
+                  ) : p.is_bot ? (
+                    <span className="text-[8px] font-semibold text-muted-foreground uppercase">
+                      BOT
+                    </span>
+                  ) : showReady ? (
+                    <span
+                      className={`text-[8px] font-semibold uppercase ${
+                        p.is_ready ? "text-emerald-400" : "text-muted-foreground"
+                      }`}
+                    >
+                      {p.is_ready ? t("state.ready") : t("state.waiting")}
                     </span>
                   ) : null}
-                </div>
-                <p className="mt-1 truncate text-[10px] font-semibold">
-                  {p.user_id === meId ? t("state.you").trim().replace(/[()]/g, "") : p.username}
-                </p>
-                {role && (
-                  <p
-                    className="truncate text-[8px] tracking-wide"
-                    style={{ color: ROLES[role].tone }}
-                  >
-                    {t(`role.${role}.label`)}
-                  </p>
-                )}
-                {showReady && p.is_alive && (
-                  <p
-                    className={`text-[8px] tracking-wide ${
-                      p.is_ready ? "text-civilian" : "text-muted-foreground"
-                    }`}
-                  >
-                    {p.is_ready ? t("state.ready") : t("state.waiting")}
-                  </p>
-                )}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     );
   }
 
+  // Grid display for Lobby / Finished screens
   return (
-    <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+    <ul className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
       {players.map((p) => {
         const role = p.role as RoleKey | null;
         const disabled = !selectable || !p.is_alive;
+        const isSelected = selectedId === p.user_id;
+        const isMe = p.user_id === meId;
+
         return (
           <li key={p.user_id}>
             <button
               type="button"
               disabled={disabled}
               onClick={() => onSelect?.(p.user_id)}
-              className={`w-full rounded-lg border p-2 text-center transition-colors ${
-                selectedId === p.user_id ? "border-primary bg-primary/15" : "border-border bg-card"
-              } ${p.is_alive ? "" : "opacity-45"} ${disabled ? "cursor-default" : "hover:border-primary"}`}
+              className={`w-full flex flex-col items-center rounded-2xl border p-2.5 transition-all ${
+                isSelected
+                  ? "border-primary bg-primary/20 ring-2 ring-primary"
+                  : "border-white/10 bg-white/[0.03] hover:border-white/20"
+              } ${!p.is_alive ? "opacity-40 grayscale" : ""}`}
             >
-              <div className="relative mx-auto h-12 w-12">
+              <div className="relative">
                 <img
                   src={p.avatar_url ?? ""}
                   alt={p.username}
-                  className="h-12 w-12 rounded-full border border-border bg-secondary object-cover"
+                  className="h-12 w-12 rounded-full border border-white/15 bg-secondary object-cover"
                 />
-                {speakerId === p.user_id && (
-                  <span className="absolute -right-1 -bottom-1 rounded-full bg-accent px-1 text-[9px] font-bold text-accent-foreground">
-                    {t("state.mic")}
+                {!p.is_alive && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
+                    ✕
                   </span>
                 )}
-                {voteCounts[p.user_id] ? (
-                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                    {voteCounts[p.user_id]}
+                {p.is_host && (
+                  <span className="absolute -top-1 -left-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] font-bold text-black shadow">
+                    ★
                   </span>
-                ) : null}
+                )}
+                {showReady && p.is_alive && (
+                  <span
+                    className={`absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-background ${
+                      p.is_ready ? "bg-emerald-400" : "bg-neutral-500"
+                    }`}
+                  />
+                )}
               </div>
-              <p className="mt-1 truncate text-xs font-semibold">
-                {p.username}
-                {p.user_id === meId ? t("state.you") : ""}
+
+              <p className="mt-1.5 w-full truncate text-center text-xs font-bold text-white">
+                {isMe ? `${p.username} (${lang === "ar" ? "أنت" : "You"})` : p.username}
               </p>
+
               {role && (
                 <p
-                  className="display text-[9px] tracking-widest"
-                  style={{ color: ROLES[role].tone }}
+                  className="mt-0.5 text-[9px] font-bold tracking-wide uppercase"
+                  style={{ color: ROLES[role]?.tone }}
                 >
                   {t(`role.${role}.label`)}
                 </p>
               )}
-              {!p.is_alive && (
-                <p className="display text-[9px] tracking-widest text-muted-foreground">DEAD</p>
-              )}
-              {showReady && p.is_alive && (
-                <p
-                  className={`display text-[9px] tracking-widest ${
-                    p.is_ready ? "text-civilian" : "text-muted-foreground"
-                  }`}
-                >
-                  {p.is_ready ? t("state.ready") : t("state.waiting")}
-                </p>
+
+              {p.is_bot && !role && (
+                <span className="text-[9px] font-semibold text-muted-foreground uppercase">
+                  AI BOT
+                </span>
               )}
             </button>
           </li>
