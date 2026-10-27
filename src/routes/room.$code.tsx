@@ -1,4 +1,4 @@
-import { ArrowLeft, Settings, X } from "lucide-react";
+import { ArrowLeft, Settings, X, Lock } from "lucide-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -555,7 +555,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                   }`}
                 >
                   <span>{lang === "ar" ? "قناة الذئاب" : "Wolf Pack"}</span>
-            <X className="h-4 w-4" />
+            <Lock className="h-3 w-3" />
           </button>
               )}
 
