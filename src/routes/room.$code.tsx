@@ -610,7 +610,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                     selectedId={selectedTargetPlayer?.user_id ?? null}
                     speakerId={phase === "DAY_DISCUSSION" ? speaker_id : null}
                     voteCounts={phase === "DAY_VOTING" ? voteCounts : {}}
-                    onSelect={handlePlayerTap}
+                    onSelect={(p) => handlePlayerTap(p.user_id)}
                   />
                 </div>
               ) : undefined
