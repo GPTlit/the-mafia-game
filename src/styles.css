@@ -26,6 +26,8 @@
   --color-medic: var(--medic);
   --color-civilian: var(--civilian);
   --color-live: var(--live);
+  --color-paper: var(--paper);
+  --color-paper-foreground: var(--paper-foreground);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -71,25 +73,25 @@
 /* THE MAFIA — light theme (white cards, cobalt primary) */
 :root {
   --radius: 0.875rem;
-  --background: oklch(0.965 0.006 255);
-  --foreground: oklch(0.2 0.03 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.03 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.03 260);
-  --primary: oklch(0.58 0.21 258);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.008 255);
-  --secondary-foreground: oklch(0.25 0.03 260);
-  --muted: oklch(0.95 0.008 255);
-  --muted-foreground: oklch(0.5 0.025 258);
-  --accent: oklch(0.94 0.03 258);
-  --accent-foreground: oklch(0.35 0.12 258);
+  --background: oklch(0.95 0.018 85);
+  --foreground: oklch(0.18 0.01 30);
+  --card: oklch(0.985 0.01 85);
+  --card-foreground: oklch(0.18 0.01 30);
+  --popover: oklch(0.985 0.01 85);
+  --popover-foreground: oklch(0.18 0.01 30);
+  --primary: oklch(0.36 0.1 18);
+  --primary-foreground: oklch(0.96 0.02 85);
+  --secondary: oklch(0.91 0.02 80);
+  --secondary-foreground: oklch(0.22 0.01 30);
+  --muted: oklch(0.91 0.02 80);
+  --muted-foreground: oklch(0.42 0.02 40);
+  --accent: oklch(0.36 0.1 18);
+  --accent-foreground: oklch(0.96 0.02 85);
   --destructive: oklch(0.6 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.91 0.01 255);
-  --input: oklch(0.91 0.01 255);
-  --ring: oklch(0.58 0.21 258);
+  --border: oklch(0.84 0.025 75);
+  --input: oklch(0.84 0.025 75);
+  --ring: oklch(0.36 0.1 18);
   --wolf: oklch(0.58 0.22 25);
   --detective: oklch(0.58 0.2 258);
   --medic: oklch(0.65 0.17 150);
@@ -112,30 +114,32 @@
   --font-body: "Plus Jakarta Sans", "Cairo", system-ui, sans-serif;
   --carbon: none;
   --shadow-card: 0 10px 30px -12px oklch(0.3 0.05 260 / 25%);
-  --gradient-night: linear-gradient(180deg, oklch(0.97 0.006 255), oklch(0.94 0.012 255));
+  --gradient-night: linear-gradient(180deg, oklch(0.96 0.018 85), oklch(0.92 0.025 80));
+  --paper: oklch(0.94 0.03 85);
+  --paper-foreground: oklch(0.16 0.01 30);
 }
 
 /* THE MAFIA — dark theme (deep navy slate, white CTA) */
 .dark {
-  --background: oklch(0.155 0.022 262);
-  --foreground: oklch(0.96 0.005 255);
-  --card: oklch(0.2 0.026 260);
-  --card-foreground: oklch(0.96 0.005 255);
-  --popover: oklch(0.2 0.026 260);
-  --popover-foreground: oklch(0.96 0.005 255);
-  --primary: oklch(0.97 0.004 255);
-  --primary-foreground: oklch(0.17 0.025 262);
-  --secondary: oklch(0.25 0.028 260);
-  --secondary-foreground: oklch(0.93 0.006 255);
-  --muted: oklch(0.24 0.026 260);
-  --muted-foreground: oklch(0.7 0.02 258);
-  --accent: oklch(0.28 0.04 258);
-  --accent-foreground: oklch(0.95 0.005 255);
+  --background: oklch(0.15 0.006 20);
+  --foreground: oklch(0.94 0.025 85);
+  --card: oklch(0.21 0.006 20);
+  --card-foreground: oklch(0.94 0.025 85);
+  --popover: oklch(0.21 0.006 20);
+  --popover-foreground: oklch(0.94 0.025 85);
+  --primary: oklch(0.93 0.03 85);
+  --primary-foreground: oklch(0.16 0.006 20);
+  --secondary: oklch(0.25 0.006 20);
+  --secondary-foreground: oklch(0.92 0.025 85);
+  --muted: oklch(0.24 0.006 20);
+  --muted-foreground: oklch(0.7 0.02 70);
+  --accent: oklch(0.4 0.1 18);
+  --accent-foreground: oklch(0.95 0.025 85);
   --destructive: oklch(0.6 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.3 0.03 260);
-  --input: oklch(0.3 0.03 260);
-  --ring: oklch(0.6 0.19 258);
+  --border: oklch(0.32 0.01 20);
+  --input: oklch(0.32 0.01 20);
+  --ring: oklch(0.55 0.13 18);
   --wolf: oklch(0.62 0.22 25);
   --detective: oklch(0.64 0.19 258);
   --medic: oklch(0.72 0.18 150);
@@ -147,11 +151,9 @@
   --sidebar-accent-foreground: oklch(0.93 0.006 255);
   --sidebar-border: oklch(0.3 0.03 260);
   --shadow-card: 0 18px 45px -14px oklch(0 0 0 / 70%);
-  --gradient-night: radial-gradient(
-    120% 70% at 50% 0%,
-    oklch(0.22 0.035 258),
-    oklch(0.15 0.022 262) 70%
-  );
+  --gradient-night: radial-gradient(120% 70% at 50% 0%, oklch(0.2 0.03 18), oklch(0.13 0.006 20) 70%);
+  --paper: oklch(0.93 0.03 85);
+  --paper-foreground: oklch(0.16 0.006 20);
 }
 
 @layer base {

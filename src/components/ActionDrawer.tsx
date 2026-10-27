@@ -105,9 +105,9 @@ export function ActionDrawer({
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 pointer-events-none animate-in slide-in-from-bottom duration-300">
-      <div className="pointer-events-auto w-full max-w-lg rounded-3xl border border-white/10 bg-[#12141c]/95 p-4 shadow-2xl backdrop-blur-xl">
+      <div className="pointer-events-auto w-full max-w-lg rounded-3xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur-xl">
         {/* Header bar */}
-        <div className="flex items-center justify-between pb-2 border-b border-white/5">
+        <div className="flex items-center justify-between pb-2 border-b border-border">
           <div className="flex items-center gap-2.5">
             <div
               className="flex h-9 w-9 items-center justify-center rounded-full text-base shadow-inner"
@@ -129,7 +129,7 @@ export function ActionDrawer({
           <button
             onClick={onCancel}
             aria-label="Dismiss"
-            className="flex h-7 w-7 items-center justify-center rounded-full bg-white/5 text-xs text-muted-foreground hover:bg-white/10 hover:text-white"
+            className="flex h-7 w-7 items-center justify-center rounded-full bg-foreground/5 text-xs text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
             ✕
           </button>
@@ -146,7 +146,7 @@ export function ActionDrawer({
                 type="button"
                 onClick={() => onSelectTarget(p)}
                 className={`flex shrink-0 flex-col items-center gap-1 rounded-2xl p-1.5 transition-all ${
-                  isSelected ? "scale-105 bg-white/10 ring-2" : "opacity-70 hover:opacity-100"
+                  isSelected ? "scale-105 bg-foreground/10 ring-2" : "opacity-70 hover:opacity-100"
                 }`}
                 style={{
                   borderColor: isSelected ? themeColor : "transparent",
@@ -157,11 +157,11 @@ export function ActionDrawer({
                   <img
                     src={p.avatar_url ?? ""}
                     alt={p.username}
-                    className="h-11 w-11 rounded-full border border-white/10 bg-secondary object-cover"
+                    className="h-11 w-11 rounded-full border border-border bg-secondary object-cover"
                   />
                   {count ? (
                     <span
-                      className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-white shadow"
+                      className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-foreground shadow"
                       style={{ backgroundColor: themeColor }}
                     >
                       {count}
@@ -174,7 +174,7 @@ export function ActionDrawer({
                     />
                   )}
                 </div>
-                <span className="w-12 truncate text-center text-[10px] font-semibold text-white">
+                <span className="w-12 truncate text-center text-[10px] font-semibold text-foreground">
                   {p.username}
                 </span>
               </button>
@@ -187,7 +187,7 @@ export function ActionDrawer({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-semibold text-muted-foreground hover:bg-white/5"
+            className="rounded-xl border border-border px-4 py-2.5 text-xs font-semibold text-muted-foreground hover:bg-foreground/5"
           >
             {lang === "ar" ? "رجوع" : lang === "fr" ? "Retour" : "Back"}
           </button>
@@ -195,7 +195,7 @@ export function ActionDrawer({
             type="button"
             onClick={onConfirm}
             disabled={busy}
-            className="flex-1 rounded-xl py-2.5 text-xs font-bold tracking-wider uppercase text-white shadow-lg transition-transform active:scale-[0.98] disabled:opacity-50"
+            className="flex-1 rounded-xl py-2.5 text-xs font-bold tracking-wider uppercase text-foreground shadow-lg transition-transform active:scale-[0.98] disabled:opacity-50"
             style={{ backgroundColor: themeColor }}
           >
             {busy ? t("common.wait") : confirmLabel}

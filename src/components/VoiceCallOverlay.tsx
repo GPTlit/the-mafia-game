@@ -42,11 +42,11 @@ export function VoiceCallOverlay({
   const otherPeers = players.filter((p) => p.user_id !== meId && p.is_alive).slice(0, 3); // show active peer slots
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-between bg-[#0e1017]/95 px-6 py-8 backdrop-blur-2xl animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex flex-col justify-between bg-card/95 px-6 py-8 backdrop-blur-2xl animate-in fade-in duration-200">
       {/* Top Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-primary">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-foreground/5 border border-border text-primary">
             <svg
               viewBox="0 0 24 24"
               className="h-5 w-5"
@@ -59,7 +59,7 @@ export function VoiceCallOverlay({
             </svg>
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white">
+            <h3 className="text-sm font-bold text-foreground">
               {lang === "ar"
                 ? "مكالمة صوتية جماعية"
                 : lang === "fr"
@@ -82,7 +82,7 @@ export function VoiceCallOverlay({
         <button
           onClick={onCloseOverlay}
           aria-label="Minimize"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
         >
           <svg
             viewBox="0 0 24 24"
@@ -111,7 +111,7 @@ export function VoiceCallOverlay({
 
           {/* Core Orb with soundwaves */}
           <div
-            className="relative flex h-24 w-24 items-center justify-center rounded-full bg-[#161922] border-2 border-emerald-400/80 shadow-[0_0_30px_rgba(52,211,153,0.3)] transition-transform duration-100"
+            className="relative flex h-24 w-24 items-center justify-center rounded-full bg-card border-2 border-emerald-400/80 shadow-[0_0_30px_rgba(52,211,153,0.3)] transition-transform duration-100"
             style={{ transform: `scale(${pulseScale})` }}
           >
             {/* Audio Waves graphic */}
@@ -130,7 +130,7 @@ export function VoiceCallOverlay({
           </div>
         </div>
 
-        <p className="mt-4 text-sm font-bold text-white tracking-wide">
+        <p className="mt-4 text-sm font-bold text-foreground tracking-wide">
           {mePlayer?.username || "You"}
         </p>
         <p className="text-[11px] text-muted-foreground">
@@ -155,9 +155,9 @@ export function VoiceCallOverlay({
                 <img
                   src={p.avatar_url ?? ""}
                   alt={p.username}
-                  className="h-12 w-12 rounded-full border border-white/10 bg-secondary object-cover"
+                  className="h-12 w-12 rounded-full border border-border bg-secondary object-cover"
                 />
-                <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-black/80 border border-white/20 text-[9px] text-emerald-400">
+                <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-black/80 border border-border text-[9px] text-emerald-400">
                   {idx === 2 ? "🔇" : "🎙️"}
                 </span>
               </div>
@@ -170,15 +170,15 @@ export function VoiceCallOverlay({
       </div>
 
       {/* Bottom Call Action Controls */}
-      <div className="mx-auto flex w-full max-w-xs items-center justify-around rounded-3xl border border-white/10 bg-white/5 p-3 backdrop-blur-md">
+      <div className="mx-auto flex w-full max-w-xs items-center justify-around rounded-3xl border border-border bg-foreground/5 p-3 backdrop-blur-md">
         {/* Mute button */}
         <button
           onClick={onToggleMute}
           aria-label={muted ? "Unmute" : "Mute"}
           className={`flex h-12 w-12 items-center justify-center rounded-full transition ${
             muted
-              ? "bg-white/10 text-muted-foreground hover:bg-white/20"
-              : "bg-white/20 text-white hover:bg-white/30"
+              ? "bg-foreground/10 text-muted-foreground hover:bg-foreground/20"
+              : "bg-foreground/20 text-foreground hover:bg-white/30"
           }`}
         >
           {muted ? (
@@ -217,7 +217,7 @@ export function VoiceCallOverlay({
             onCloseOverlay();
           }}
           aria-label="End Call"
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-red-600 text-white shadow-lg shadow-red-600/30 transition hover:bg-red-700 active:scale-95"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-red-600 text-foreground shadow-lg shadow-red-600/30 transition hover:bg-red-700 active:scale-95"
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6 rotate-[135deg]" fill="currentColor">
             <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-2.2 2.2a15.053 15.053 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 3.99c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.61c0-.55-.45-1-.99-1z" />
@@ -230,8 +230,8 @@ export function VoiceCallOverlay({
           aria-label="Speaker"
           className={`flex h-12 w-12 items-center justify-center rounded-full transition ${
             speakerActive
-              ? "bg-white/20 text-white hover:bg-white/30"
-              : "bg-white/10 text-muted-foreground hover:bg-white/20"
+              ? "bg-foreground/20 text-foreground hover:bg-white/30"
+              : "bg-foreground/10 text-muted-foreground hover:bg-foreground/20"
           }`}
         >
           <svg

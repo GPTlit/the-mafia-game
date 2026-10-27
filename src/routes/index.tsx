@@ -95,7 +95,7 @@ function Index() {
             className="h-10 w-10 rounded-2xl border border-red-500/30 object-cover shadow-lg shadow-red-950/40"
           />
           <div>
-            <span className="wordmark text-lg font-black tracking-wider text-white">MAFIA</span>
+            <span className="wordmark text-lg font-black tracking-wider text-foreground">MAFIA</span>
             <p className="text-[9px] font-bold tracking-[0.2em] text-red-500 uppercase">
               {lang === "ar" ? "لا تثق بأحد" : "TRUST NO ONE"}
             </p>
@@ -106,12 +106,12 @@ function Index() {
           {session && profileStats ? (
             <button
               onClick={() => setShowProfile(true)}
-              className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 py-1 ps-1.5 pe-3 text-xs font-semibold text-white shadow hover:bg-white/10 transition"
+              className="flex items-center gap-1.5 rounded-full border border-border bg-foreground/5 py-1 ps-1.5 pe-3 text-xs font-semibold text-foreground shadow hover:bg-foreground/10 transition"
             >
               <img
                 src={profileStats.avatar_url || AVATARS[0]!}
                 alt="Profile"
-                className="h-6 w-6 rounded-full border border-white/20 object-cover"
+                className="h-6 w-6 rounded-full border border-border object-cover"
               />
               <span className="text-[11px] font-bold" style={{ color: rankTier?.color }}>
                 {rankTier?.badge} {profileStats.points}
@@ -120,7 +120,7 @@ function Index() {
           ) : (
             <button
               onClick={() => setShowAuthModal(true)}
-              className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold text-white hover:bg-white/20 transition"
+              className="rounded-full bg-foreground/10 px-3 py-1.5 text-xs font-bold text-foreground hover:bg-foreground/20 transition"
             >
               {lang === "ar" ? "تسجيل الدخول" : "Sign In"}
             </button>
@@ -129,7 +129,7 @@ function Index() {
           <button
             onClick={() => setShowSettings(true)}
             aria-label="Settings"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white transition"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground transition"
           >
             ⚙️
           </button>
@@ -141,7 +141,7 @@ function Index() {
         {/* Moon Wolf Graphic Frame */}
         <div className="relative mb-5 flex h-48 w-48 sm:h-56 sm:w-56 items-center justify-center">
           <div className="absolute inset-0 rounded-full bg-gradient-to-b from-blue-500/20 to-red-500/20 blur-xl" />
-          <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-white/15 bg-black/40 shadow-[0_0_40px_rgba(0,0,0,0.8)]">
+          <div className="relative h-full w-full overflow-hidden rounded-full border-2 border-border bg-black/40 shadow-[0_0_40px_rgba(0,0,0,0.8)]">
             <img
               src="/cards/hero-moon.jpg"
               alt="Mafia Wolf Moon"
@@ -150,7 +150,7 @@ function Index() {
           </div>
         </div>
 
-        <h1 className="wordmark text-4xl sm:text-5xl font-black tracking-wider text-white">
+        <h1 className="wordmark text-4xl sm:text-5xl font-black tracking-wider text-foreground">
           MAFIA
         </h1>
         <p className="mt-1 text-xs font-bold tracking-[0.25em] text-red-500 uppercase">
@@ -216,7 +216,7 @@ function Index() {
               else void create();
             }}
             disabled={busy}
-            className="w-full rounded-2xl bg-white py-3.5 text-sm font-black tracking-widest uppercase text-black shadow-xl shadow-white/10 transition-all hover:bg-neutral-200 active:scale-95 disabled:opacity-50"
+            className="w-full rounded-2xl bg-white py-3.5 text-sm font-black tracking-widest uppercase text-black shadow-xl shadow-white/10 transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
           >
             {busy ? t("common.wait") : lang === "ar" ? "العب الآن" : "Play Now"}
           </button>
@@ -224,13 +224,13 @@ function Index() {
           <div className="flex gap-2">
             <button
               onClick={() => setActiveTab(activeTab === "join" ? "lobby" : "join")}
-              className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-xs font-bold text-white hover:bg-white/10 transition"
+              className="flex-1 rounded-xl border border-border bg-foreground/5 py-2.5 text-xs font-bold text-foreground hover:bg-foreground/10 transition"
             >
               {lang === "ar" ? "انضمام برمز" : "Join Code"}
             </button>
             <Link
               to="/offline"
-              className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-xs font-bold text-center text-white hover:bg-white/10 transition"
+              className="flex-1 rounded-xl border border-border bg-foreground/5 py-2.5 text-xs font-bold text-center text-foreground hover:bg-foreground/10 transition"
             >
               {lang === "ar" ? "تدريب فردي" : "Solo Practice"}
             </Link>
@@ -245,12 +245,12 @@ function Index() {
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               placeholder={lang === "ar" ? "رمز الغرفة" : "ROOM CODE"}
               maxLength={5}
-              className="flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-center text-sm font-bold tracking-[0.25em] text-white outline-none focus:border-red-500"
+              className="flex-1 rounded-xl border border-border bg-foreground/5 px-3 py-2 text-center text-sm font-bold tracking-[0.25em] text-foreground outline-none focus:border-red-500"
             />
             <button
               onClick={() => void join()}
               disabled={busy || code.trim().length < 4}
-              className="rounded-xl bg-red-600 px-4 text-xs font-bold uppercase text-white disabled:opacity-40"
+              className="rounded-xl bg-red-600 px-4 text-xs font-bold uppercase text-foreground disabled:opacity-40"
             >
               {lang === "ar" ? "انضم" : "Join"}
             </button>
@@ -261,8 +261,8 @@ function Index() {
       </section>
 
       {/* Modes & Role Rules Bottom Sheet Card */}
-      <section className="mt-auto rounded-3xl border border-white/10 bg-black/40 p-4 backdrop-blur-md">
-        <div className="flex items-center justify-between pb-2 border-b border-white/5">
+      <section className="mt-auto rounded-3xl border border-border bg-black/40 p-4 backdrop-blur-md">
+        <div className="flex items-center justify-between pb-2 border-b border-border">
           <span className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
             {lang === "ar" ? "أنماط اللعب والأدوار" : "Game Modes & Roles"}
           </span>
@@ -275,16 +275,16 @@ function Index() {
         </div>
 
         <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
-          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-2">
-            <p className="text-[11px] font-bold text-white">4–5</p>
+          <div className="rounded-xl border border-border bg-foreground/[0.02] p-2">
+            <p className="text-[11px] font-bold text-foreground">4–5</p>
             <p className="mt-0.5 text-[9px] text-muted-foreground">1 Wolf · 1 Det · 1 Doc</p>
           </div>
-          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-2">
-            <p className="text-[11px] font-bold text-white">6–8</p>
+          <div className="rounded-xl border border-border bg-foreground/[0.02] p-2">
+            <p className="text-[11px] font-bold text-foreground">6–8</p>
             <p className="mt-0.5 text-[9px] text-muted-foreground">2 Wolves · 1 Det · 1 Doc</p>
           </div>
-          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-2">
-            <p className="text-[11px] font-bold text-white">9+</p>
+          <div className="rounded-xl border border-border bg-foreground/[0.02] p-2">
+            <p className="text-[11px] font-bold text-foreground">9+</p>
             <p className="mt-0.5 text-[9px] text-muted-foreground">3 Wolves · Remainder Civ</p>
           </div>
         </div>
@@ -297,7 +297,7 @@ function Index() {
             <button
               onClick={() => setShowAuthModal(false)}
               aria-label="Close"
-              className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white"
+              className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-foreground/10 text-foreground"
             >
               ✕
             </button>
