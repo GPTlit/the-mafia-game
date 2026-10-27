@@ -1,3 +1,6 @@
+import { X } from "lucide-react";
+import { setChatStyle, useChatStyle } from "@/lib/chatStyle";
+import { ROLES as ROLE_ART } from "@/lib/roles";
 import { useI18n, type Lang } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { ROLES, type RoleKey } from "@/lib/roles";
@@ -99,10 +102,10 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-0 sm:items-center sm:p-4 backdrop-blur-sm animate-in fade-in">
-      <div className="relative max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-white/10 bg-[#14161f] p-5 text-foreground shadow-2xl">
+      <div className="relative max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-border bg-card p-5 text-foreground shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-white/10">
-          <h2 className="text-base font-bold text-white">
+        <div className="flex items-center justify-between pb-3 border-b border-border">
+          <h2 className="text-base font-bold text-foreground">
             {lang === "ar"
               ? "الإعدادات والأدوار"
               : lang === "fr"
@@ -112,11 +115,14 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
           <button
             onClick={onClose}
             aria-label="Close"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            ✕
+            <X className="h-4 w-4" />
           </button>
         </div>
+
+        {/* Chat style */}
+        <ChatStylePicker lang={lang} />
 
         {/* The Roles Section */}
         <div className="mt-4">
@@ -127,20 +133,14 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
             {rolesList.map((r) => (
               <div
                 key={r.key}
-                className="flex items-start gap-3 rounded-2xl border p-3 bg-white/[0.02]"
+                className="flex items-start gap-3 rounded-2xl border p-3 bg-foreground/[0.02]"
                 style={{ borderColor: `${r.color}30` }}
               >
                 <div
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg font-bold"
                   style={{ backgroundColor: `${r.color}20`, color: r.color }}
                 >
-                  {r.key === "WOLF"
-                    ? "🐺"
-                    : r.key === "DETECTIVE"
-                      ? "🕵️"
-                      : r.key === "DOCTOR"
-                        ? "➕"
-                        : "👤"}
+                  <img src={ROLE_ART[r.key as keyof typeof ROLE_ART].art} alt="" className="h-full w-full rounded-xl object-cover" loading="eager" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between">
@@ -164,7 +164,7 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
         </div>
 
         {/* Language Selection */}
-        <div className="mt-5 rounded-2xl border border-white/5 bg-white/[0.02] p-3.5">
+        <div className="mt-5 rounded-2xl border border-border bg-foreground/[0.02] p-3.5">
           <h4 className="text-xs font-bold text-muted-foreground">
             {lang === "ar" ? "اللغة" : lang === "fr" ? "Langue" : "Language"}
           </h4>
@@ -180,8 +180,8 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
                 onClick={() => setLang(item.id)}
                 className={`flex items-center justify-center gap-1.5 rounded-xl border py-2 text-xs font-semibold transition ${
                   lang === item.id
-                    ? "border-primary bg-primary/20 text-white"
-                    : "border-white/5 bg-white/[0.02] text-muted-foreground hover:bg-white/5"
+                    ? "border-primary bg-primary/20 text-foreground"
+                    : "border-border bg-foreground/[0.02] text-muted-foreground hover:bg-foreground/5"
                 }`}
               >
                 <span>{item.flag}</span>
@@ -192,7 +192,7 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
         </div>
 
         {/* Theme Selection */}
-        <div className="mt-3 rounded-2xl border border-white/5 bg-white/[0.02] p-3.5">
+        <div className="mt-3 rounded-2xl border border-border bg-foreground/[0.02] p-3.5">
           <h4 className="text-xs font-bold text-muted-foreground">
             {lang === "ar" ? "المظهر" : lang === "fr" ? "Thème" : "Theme"}
           </h4>
@@ -202,11 +202,11 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
               onClick={() => theme === "dark" && toggle()}
               className={`flex items-center justify-center gap-2 rounded-xl border py-2 text-xs font-semibold transition ${
                 theme === "light"
-                  ? "border-primary bg-primary/20 text-white"
-                  : "border-white/5 bg-white/[0.02] text-muted-foreground hover:bg-white/5"
+                  ? "border-primary bg-primary/20 text-foreground"
+                  : "border-border bg-foreground/[0.02] text-muted-foreground hover:bg-foreground/5"
               }`}
             >
-              <span>☀️</span>
+              
               <span>{lang === "ar" ? "فاتح" : lang === "fr" ? "Clair" : "Light"}</span>
             </button>
             <button
@@ -214,18 +214,18 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
               onClick={() => theme === "light" && toggle()}
               className={`flex items-center justify-center gap-2 rounded-xl border py-2 text-xs font-semibold transition ${
                 theme === "dark"
-                  ? "border-primary bg-primary/20 text-white"
-                  : "border-white/5 bg-white/[0.02] text-muted-foreground hover:bg-white/5"
+                  ? "border-primary bg-primary/20 text-foreground"
+                  : "border-border bg-foreground/[0.02] text-muted-foreground hover:bg-foreground/5"
               }`}
             >
-              <span>🌙</span>
+              
               <span>{lang === "ar" ? "داكن" : lang === "fr" ? "Sombre" : "Dark"}</span>
             </button>
           </div>
         </div>
 
         {/* Layout Direction */}
-        <div className="mt-3 rounded-2xl border border-white/5 bg-white/[0.02] p-3.5">
+        <div className="mt-3 rounded-2xl border border-border bg-foreground/[0.02] p-3.5">
           <h4 className="text-xs font-bold text-muted-foreground">
             {lang === "ar"
               ? "اتجاه الواجهة"
@@ -237,14 +237,14 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
             <button
               type="button"
               onClick={() => handleDirection("ltr")}
-              className="flex items-center justify-center gap-2 rounded-xl border border-white/5 bg-white/[0.02] py-2 text-xs font-semibold text-muted-foreground hover:bg-white/5"
+              className="flex items-center justify-center gap-2 rounded-xl border border-border bg-foreground/[0.02] py-2 text-xs font-semibold text-muted-foreground hover:bg-foreground/5"
             >
               <span>LTR (Left-to-Right)</span>
             </button>
             <button
               type="button"
               onClick={() => handleDirection("rtl")}
-              className="flex items-center justify-center gap-2 rounded-xl border border-white/5 bg-white/[0.02] py-2 text-xs font-semibold text-muted-foreground hover:bg-white/5"
+              className="flex items-center justify-center gap-2 rounded-xl border border-border bg-foreground/[0.02] py-2 text-xs font-semibold text-muted-foreground hover:bg-foreground/5"
             >
               <span>RTL (Right-to-Left)</span>
             </button>
@@ -253,10 +253,40 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
 
         <button
           onClick={onClose}
-          className="mt-5 w-full rounded-xl bg-primary py-3 text-xs font-bold tracking-wider uppercase text-white shadow-lg transition active:scale-95"
+          className="mt-5 w-full rounded-xl bg-primary py-3 text-xs font-bold tracking-wider uppercase text-foreground shadow-lg transition active:scale-95"
         >
           {lang === "ar" ? "تم" : lang === "fr" ? "Fermer" : "Done"}
         </button>
+      </div>
+    </div>
+  );
+}
+
+function ChatStylePicker({ lang }: { lang: string }) {
+  const style = useChatStyle();
+  const opts = [
+    { k: "bubbles" as const, l: lang === "ar" ? "فقاعات فوق الرأس" : lang === "fr" ? "Bulles au-dessus" : "Thought bubbles" },
+    { k: "side" as const, l: lang === "ar" ? "دردشة جانبية" : lang === "fr" ? "Discussion classique" : "Side chat" },
+  ];
+  return (
+    <div className="mt-4">
+      <h3 className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
+        {lang === "ar" ? "نمط الدردشة" : lang === "fr" ? "Style du chat" : "Chat style"}
+      </h3>
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        {opts.map((o) => (
+          <button
+            key={o.k}
+            onClick={() => setChatStyle(o.k)}
+            className={`rounded-xl border px-3 py-2.5 text-xs font-semibold transition ${
+              style === o.k
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border bg-card text-foreground hover:bg-foreground/5"
+            }`}
+          >
+            {o.l}
+          </button>
+        ))}
       </div>
     </div>
   );

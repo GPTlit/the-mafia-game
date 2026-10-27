@@ -1,3 +1,4 @@
+import { Phone } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { api, type ChatMessage, type Player } from "@/lib/game";
 import { useI18n } from "@/lib/i18n";
@@ -89,7 +90,7 @@ function RecorderAndSwipeUp({
           className="pointer-events-none absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1 shadow-lg shadow-emerald-500/40 text-[10px] font-bold text-black"
           style={{ transform: `translate(-50%, -${dragOffset * 0.7}px)` }}
         >
-          <span>📞</span>
+          
           <span className="h-1.5 w-1.5 rounded-full bg-black animate-ping" />
         </div>
       )}
@@ -106,8 +107,8 @@ function RecorderAndSwipeUp({
         aria-label="Voice Note or Swipe Up"
         className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all ${
           recording
-            ? "bg-red-500 text-white scale-110 shadow-lg shadow-red-500/30"
-            : "bg-white/10 text-white hover:bg-white/15 active:scale-95"
+            ? "bg-red-500 text-foreground scale-110 shadow-lg shadow-red-500/30"
+            : "bg-foreground/10 text-foreground hover:bg-foreground/15 active:scale-95"
         }`}
       >
         {recording ? (
@@ -145,6 +146,7 @@ export function Chat({
   actionSlot,
   onSent,
   onOpenVoiceCall,
+  feedOverride,
 }: {
   roomId: string;
   channel: ChatMessage["channel"];
@@ -158,6 +160,7 @@ export function Chat({
   actionSlot?: ReactNode;
   onSent?: () => void;
   onOpenVoiceCall?: () => void;
+  feedOverride?: ReactNode;
 }) {
   const { lang, t } = useI18n();
   const [text, setText] = useState("");
@@ -209,7 +212,9 @@ export function Chat({
 
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-      {/* Scrollable Chat Feed */}
+      {feedOverride ? (
+        <div className="min-h-0 flex-1 overflow-y-auto">{feedOverride}</div>
+      ) : (
       <div
         ref={scroller}
         onScroll={(e) => {
@@ -221,7 +226,7 @@ export function Chat({
         <div className="flex min-h-full flex-col justify-end gap-2.5">
           {list.length === 0 && (
             <div className="my-auto py-8 text-center text-xs text-muted-foreground">
-              <span className="text-2xl">💬</span>
+              
               <p className="mt-2">{t("chat.empty")}</p>
             </div>
           )}
@@ -236,7 +241,7 @@ export function Chat({
             if (isSystem) {
               return (
                 <div key={m.id} className="mx-auto my-1 max-w-[90%] text-center">
-                  <span className="inline-block rounded-full bg-white/10 px-3.5 py-1 text-[11px] font-semibold text-white/90 shadow-sm backdrop-blur-md">
+                  <span className="inline-block rounded-full bg-foreground/10 px-3.5 py-1 text-[11px] font-semibold text-foreground/90 shadow-sm backdrop-blur-md">
                     {m.content}
                   </span>
                 </div>
@@ -252,7 +257,7 @@ export function Chat({
                   <img
                     src={senderAvatar}
                     alt={senderName}
-                    className="h-7 w-7 rounded-full border border-white/10 bg-secondary object-cover shrink-0"
+                    className="h-7 w-7 rounded-full border border-border bg-secondary object-cover shrink-0"
                   />
                 )}
 
@@ -260,7 +265,7 @@ export function Chat({
                   className={`relative max-w-[82%] rounded-2xl px-3.5 py-2 text-xs shadow-md ${
                     isMine
                       ? "rounded-br-none bg-primary text-primary-foreground"
-                      : "rounded-bl-none bg-[#1e222e] text-white border border-white/5"
+                      : "rounded-bl-none bg-card text-foreground border border-border"
                   }`}
                 >
                   {!isMine && (
@@ -289,21 +294,22 @@ export function Chat({
           })}
         </div>
       </div>
+      )}
 
       {actionSlot}
 
       {/* Pinned Bottom WhatsApp-Style Composer */}
       {canWrite ? (
-        <div className="mt-auto shrink-0 border-t border-white/10 bg-[#12141c]/90 px-3 py-2 backdrop-blur-xl">
+        <div className="mt-auto shrink-0 border-t border-border bg-card/90 px-3 py-2 backdrop-blur-xl">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => onOpenVoiceCall?.()}
               aria-label="Call icon"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
             >
-              📞
-            </button>
+            <Phone className="h-4 w-4" />
+          </button>
 
             <div className="relative flex-1">
               <input
@@ -311,7 +317,7 @@ export function Chat({
                 onChange={(e) => setText(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && void send()}
                 placeholder={placeholder ?? (lang === "ar" ? "اكتب رسالة…" : "Type a message…")}
-                className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-muted-foreground outline-none focus:border-primary transition"
+                className="w-full rounded-full border border-border bg-foreground/5 px-4 py-2.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-primary transition"
               />
             </div>
 
@@ -337,7 +343,7 @@ export function Chat({
           </div>
         </div>
       ) : (
-        <div className="shrink-0 border-t border-white/5 bg-[#12141c]/60 py-2.5 text-center text-xs text-muted-foreground">
+        <div className="shrink-0 border-t border-border bg-card/60 py-2.5 text-center text-xs text-muted-foreground">
           {t("chat.spectator")}
         </div>
       )}

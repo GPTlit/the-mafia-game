@@ -1,3 +1,4 @@
+import { ArrowLeft, Settings, X, Lock } from "lucide-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,6 +8,8 @@ import { api, phaseKey, type Player } from "@/lib/game";
 import { useI18n, type TFunc } from "@/lib/i18n";
 import { GameCard, ROLES, type RoleKey } from "@/lib/roles";
 import { PlayerGrid } from "@/components/PlayerGrid";
+import { SeatTable } from "@/components/SeatTable";
+import { useChatStyle } from "@/lib/chatStyle";
 import { Chat } from "@/components/Chat";
 import { ActionDrawer } from "@/components/ActionDrawer";
 import { VoiceCallOverlay } from "@/components/VoiceCallOverlay";
@@ -14,7 +17,7 @@ import { SettingsDrawer } from "@/components/SettingsDrawer";
 import { ProfileModal } from "@/components/ProfileModal";
 import { useVoiceCall } from "@/lib/useVoiceCall";
 import { isNarratorMuted, setNarratorMuted, speakPhase } from "@/lib/narrator";
-import { awardPointsForMatch, fetchProfileStats, type ProfileStats } from "@/lib/profile";
+import { claimMatchReward, fetchProfileStats, type ProfileStats } from "@/lib/profile";
 
 export const Route = createFileRoute("/room/$code")({
   head: () => ({
@@ -60,7 +63,7 @@ function RoomPage() {
     return (
       <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-3 px-4 text-center">
         <p className="text-destructive font-semibold">{joinError}</p>
-        <Link to="/" className="text-sm underline text-white">
+        <Link to="/" className="text-sm underline text-foreground">
           Back home
         </Link>
       </main>
@@ -88,6 +91,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
 
   const { state, messages, error, refresh } = useRoom(roomId);
   const secondsLeft = useCountdown(state?.room.phase_ends_at);
+  const chatStyle = useChatStyle();
 
   const [actionError, setActionError] = useState<string | null>(null);
   const [cardOpen, setCardOpen] = useState(true);
@@ -140,15 +144,10 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
   // Pillar 1: Award points upon match finish
   useEffect(() => {
     if (state?.room.status === "FINISHED" && !matchAwarded && profileStats && state.me) {
-      const won =
-        (state.room.winner === "WOLVES" && state.me.role === "WOLF") ||
-        (state.room.winner === "TOWN" && state.me.role !== "WOLF");
-      const { updated } = awardPointsForMatch(profileStats, {
-        won,
-        role: state.me.role,
-        survived: state.me.is_alive,
-      });
-      setProfileStats(updated);
+      const rid = state.room.id as string;
+      void claimMatchReward(rid).then(() =>
+        fetchProfileStats(state.me!.user_id).then(setProfileStats),
+      );
       setMatchAwarded(true);
     }
   }, [state?.room.status, matchAwarded, profileStats, state?.me]);
@@ -177,7 +176,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
     return (
       <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-3 px-4 text-center">
         <p className="text-destructive font-semibold">{error}</p>
-        <Link to="/" className="text-sm underline text-white">
+        <Link to="/" className="text-sm underline text-foreground">
           Back home
         </Link>
       </main>
@@ -254,14 +253,14 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
   return (
     <main className="mx-auto flex h-[100dvh] max-h-[100dvh] w-full max-w-lg flex-col overflow-hidden bg-background text-foreground select-none">
       {/* Pillar 3: Pinned Header */}
-      <header className="shrink-0 flex items-center justify-between border-b border-white/10 bg-[#12141c]/95 px-3 py-2.5 backdrop-blur-md">
+      <header className="shrink-0 flex items-center justify-between border-b border-border bg-card/95 px-3 py-2.5 backdrop-blur-md">
         <div className="flex items-center gap-2">
           <button
             onClick={() => void navigate({ to: "/" })}
             aria-label="Back"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            ❮
+            <ArrowLeft className="h-4 w-4" />
           </button>
           <img
             src="/logo.png"
@@ -270,13 +269,13 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
           />
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-bold text-xs text-white">#{code}</span>
+              <span className="font-bold text-xs text-foreground">#{code}</span>
               <button
                 onClick={copyCode}
                 title="Copy Room Code"
-                className="text-[10px] text-muted-foreground hover:text-white"
+                className="text-[10px] text-muted-foreground hover:text-foreground"
               >
-                {copied ? "✓" : "📋"}
+                {copied ? "" : ""}
               </button>
             </div>
             {room.status === "IN_PROGRESS" && (
@@ -291,8 +290,8 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
         <div className="flex items-center gap-2">
           {/* Phase Countdown Timer */}
           {room.phase_ends_at && room.status === "IN_PROGRESS" && phase !== "DAY_CONCLUSION" && (
-            <div className="flex items-center gap-1 rounded-full bg-white/5 border border-white/10 px-2.5 py-0.5 text-xs font-bold tabular-nums text-white">
-              <span>⏱️</span>
+            <div className="flex items-center gap-1 rounded-full bg-foreground/5 border border-border px-2.5 py-0.5 text-xs font-bold tabular-nums text-foreground">
+              <span>⏱</span>
               <span>{secondsLeft}s</span>
             </div>
           )}
@@ -303,11 +302,11 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             title={narratorMuted ? "Unmute Narrator" : "Mute Narrator"}
             className={`flex h-8 w-8 items-center justify-center rounded-full border text-xs transition ${
               narratorMuted
-                ? "border-white/10 bg-white/5 text-muted-foreground"
-                : "border-primary/40 bg-primary/20 text-white"
+                ? "border-border bg-foreground/5 text-muted-foreground"
+                : "border-primary/40 bg-primary/20 text-foreground"
             }`}
           >
-            {narratorMuted ? "🔇" : "🔊"}
+            {narratorMuted ? "" : ""}
           </button>
 
           {/* WhatsApp-Style Group Voice Call Button (Pillar 4) */}
@@ -320,10 +319,10 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold transition shadow ${
               call.inCall
                 ? "border-emerald-500/40 bg-emerald-500/20 text-emerald-400 animate-pulse"
-                : "border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white"
+                : "border-border bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
             }`}
           >
-            <span>📞</span>
+            
             <span className="text-[10px]">
               {call.inCall ? `Live · ${call.peerCount + 1}` : "Call"}
             </span>
@@ -334,7 +333,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             <button
               onClick={() => setShowProfile(true)}
               title="Syndicate Hierarchy"
-              className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 py-0.5 ps-1 pe-2 text-[11px] font-bold text-white hover:bg-white/10 transition"
+              className="flex items-center gap-1 rounded-full border border-border bg-foreground/5 py-0.5 ps-1 pe-2 text-[11px] font-bold text-foreground hover:bg-foreground/10 transition"
             >
               <img
                 src={profileStats.avatar_url || "/logo.png"}
@@ -349,15 +348,16 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
           <button
             onClick={() => setShowSettings(true)}
             aria-label="Settings"
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            ⚙️
+            <Settings className="h-4 w-4" />
           </button>
         </div>
       </header>
 
       {/* Compact Horizontal Table Strip (Pillar 3 & Pillar 2) */}
-      <section className="shrink-0 border-b border-white/5 bg-[#141620]/90 px-2 py-1.5">
+      {!(room.status === "IN_PROGRESS" && chatStyle === "bubbles") && (
+      <section className="shrink-0 border-b border-border bg-card/90 px-2 py-1.5">
         <PlayerGrid
           compact
           players={players}
@@ -371,24 +371,25 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
           onSelect={handlePlayerTap}
         />
       </section>
+      )}
 
       {/* Main View Area */}
       {room.status === "LOBBY" && (
         <section className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* Game Mode Selector matching prototype */}
-          <div className="rounded-3xl border border-white/10 bg-[#161822] p-4 shadow-lg">
+          <div className="rounded-3xl border border-border bg-card p-4 shadow-lg">
             <p className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
               {lang === "ar" ? "نمط اللعبة" : "Game mode"}
             </p>
             <div className="mt-2.5 grid grid-cols-3 gap-2">
               {[
-                { id: "ONLINE" as const, label: lang === "ar" ? "أونلاين" : "Online", icon: "🌐" },
+                { id: "ONLINE" as const, label: lang === "ar" ? "أونلاين" : "Online", icon: "" },
                 {
                   id: "HYBRID" as const,
                   label: lang === "ar" ? "مختلط (روبوتات)" : "Hybrid (Bots)",
-                  icon: "👥",
+                  icon: "",
                 },
-                { id: "SOLO" as const, label: lang === "ar" ? "فردي" : "Solo", icon: "🤖" },
+                { id: "SOLO" as const, label: lang === "ar" ? "فردي" : "Solo", icon: "" },
               ].map((m) => (
                 <button
                   key={m.id}
@@ -396,8 +397,8 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                   onClick={() => setGameMode(m.id)}
                   className={`flex flex-col items-center gap-1 rounded-2xl border p-2 text-xs font-semibold transition ${
                     gameMode === m.id
-                      ? "border-primary bg-primary/20 text-white"
-                      : "border-white/5 bg-white/[0.02] text-muted-foreground hover:bg-white/5"
+                      ? "border-primary bg-primary/20 text-foreground"
+                      : "border-border bg-foreground/[0.02] text-muted-foreground hover:bg-foreground/5"
                   }`}
                 >
                   <span className="text-base">{m.icon}</span>
@@ -411,14 +412,14 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
               <span className="text-muted-foreground">
                 {lang === "ar" ? "عدد المقاعد" : "Players"}
               </span>
-              <span className="font-bold text-white tabular-nums">{players.length} / 15</span>
+              <span className="font-bold text-foreground tabular-nums">{players.length} / 15</span>
             </div>
 
             {/* Bot filling toggle if host */}
             {me.is_host && (
-              <div className="mt-4 flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.02] p-3">
+              <div className="mt-4 flex items-center justify-between rounded-2xl border border-border bg-foreground/[0.02] p-3">
                 <div>
-                  <p className="text-xs font-bold text-white">
+                  <p className="text-xs font-bold text-foreground">
                     {lang === "ar" ? "إضافة روبوتات ذكية" : "Add AI Bots"}
                   </p>
                   <p className="text-[10px] text-muted-foreground">
@@ -432,7 +433,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                     type="button"
                     onClick={() => void run(() => api.addBots(roomId, 1))}
                     disabled={players.length >= 15}
-                    className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 text-white font-bold hover:bg-white/20 disabled:opacity-40"
+                    className="flex h-8 w-8 items-center justify-center rounded-xl bg-foreground/10 text-foreground font-bold hover:bg-foreground/20 disabled:opacity-40"
                   >
                     +
                   </button>
@@ -440,7 +441,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                     type="button"
                     onClick={() => void run(() => api.removeBots(roomId, 1))}
                     disabled={!players.some((p) => p.is_bot)}
-                    className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 text-white font-bold hover:bg-white/20 disabled:opacity-40"
+                    className="flex h-8 w-8 items-center justify-center rounded-xl bg-foreground/10 text-foreground font-bold hover:bg-foreground/20 disabled:opacity-40"
                   >
                     -
                   </button>
@@ -454,8 +455,8 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                 onClick={() => void run(() => api.setReady(roomId, !me.is_ready))}
                 className={`w-full rounded-2xl py-3 text-xs font-bold tracking-wider uppercase transition shadow-lg ${
                   me.is_ready
-                    ? "border border-white/20 bg-white/5 text-muted-foreground"
-                    : "bg-emerald-600 text-white hover:bg-emerald-500"
+                    ? "border border-border bg-foreground/5 text-muted-foreground"
+                    : "bg-emerald-600 text-foreground hover:bg-emerald-500"
                 }`}
               >
                 {me.is_ready ? t("lobby.cancelReady") : t("lobby.ready")}
@@ -465,7 +466,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                 <button
                   onClick={() => void run(() => api.startGame(roomId))}
                   disabled={players.length < 6 || players.some((p) => !p.is_ready)}
-                  className="w-full rounded-2xl bg-white py-3.5 text-xs font-black tracking-widest uppercase text-black transition-all hover:bg-neutral-200 active:scale-98 disabled:opacity-40 shadow-xl"
+                  className="w-full rounded-2xl bg-white py-3.5 text-xs font-black tracking-widest uppercase text-black transition-all hover:opacity-90 active:scale-98 disabled:opacity-40 shadow-xl"
                 >
                   {t("lobby.start")}
                 </button>
@@ -474,16 +475,16 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
           </div>
 
           {/* Share Room Code Card */}
-          <div className="rounded-3xl border border-white/10 bg-[#161822] p-4 text-center">
+          <div className="rounded-3xl border border-border bg-card p-4 text-center">
             <p className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
               {lang === "ar" ? "رمز الغرفة للمشاركة" : "Room Code"}
             </p>
-            <p className="mt-1 text-2xl font-black tracking-[0.25em] text-white">{code}</p>
+            <p className="mt-1 text-2xl font-black tracking-[0.25em] text-foreground">{code}</p>
             <button
               onClick={copyCode}
-              className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold text-white hover:bg-white/10"
+              className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-foreground/5 px-4 py-1.5 text-xs font-semibold text-foreground hover:bg-foreground/10"
             >
-              <span>{copied ? "✓ Copied!" : "🔗 Share Code"}</span>
+              <span>{copied ? " Copied!" : " Share Code"}</span>
             </button>
           </div>
         </section>
@@ -493,10 +494,10 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
       {room.status === "FINISHED" && (
         <section className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center text-center">
           <div className="relative">
-            <span className="text-6xl">{room.winner === "WOLVES" ? "🐺" : "🏆"}</span>
+            <span className="text-6xl">{room.winner === "WOLVES" ? "" : ""}</span>
           </div>
 
-          <h2 className="mt-3 text-3xl font-black uppercase tracking-wider text-white">
+          <h2 className="mt-3 text-3xl font-black uppercase tracking-wider text-foreground">
             {room.winner === "WOLVES" ? t("room.wolvesWin") : t("room.townWin")}
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">{t("room.revealed")}</p>
@@ -508,9 +509,9 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
           <div className="mt-6 flex gap-3">
             <button
               onClick={() => setShowProfile(true)}
-              className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-white hover:bg-white/10"
+              className="rounded-xl border border-border bg-foreground/5 px-4 py-2.5 text-xs font-bold text-foreground hover:bg-foreground/10"
             >
-              📊 {lang === "ar" ? "سجل الرتبة والنقاط" : "Syndicate Hierarchy"}
+               {lang === "ar" ? "سجل الرتبة والنقاط" : "Syndicate Hierarchy"}
             </button>
             <Link
               to="/"
@@ -526,14 +527,14 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
       {room.status === "IN_PROGRESS" && (
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           {/* Chat Channel Switcher Tabs */}
-          <div className="flex shrink-0 items-center justify-between border-b border-white/10 bg-[#141620] px-3 py-2">
+          <div className="flex shrink-0 items-center justify-between border-b border-border bg-card px-3 py-2">
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setTab("GLOBAL")}
                 className={`rounded-full px-3.5 py-1 text-xs font-bold transition ${
                   tab === "GLOBAL"
-                    ? "bg-white text-black shadow"
-                    : "text-muted-foreground hover:text-white"
+                    ? "bg-primary text-primary-foreground shadow"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {lang === "ar" ? "الدردشة العامة" : "Global Chat"}
@@ -544,13 +545,13 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                   onClick={() => setTab("WOLF_PRIVATE")}
                   className={`flex items-center gap-1 rounded-full px-3.5 py-1 text-xs font-bold transition ${
                     tab === "WOLF_PRIVATE"
-                      ? "bg-red-600 text-white shadow"
+                      ? "bg-red-600 text-foreground shadow"
                       : "text-red-400 hover:text-red-300"
                   }`}
                 >
                   <span>{lang === "ar" ? "قناة الذئاب" : "Wolf Pack"}</span>
-                  <span>🔒</span>
-                </button>
+            <Lock className="h-3 w-3" />
+          </button>
               )}
 
               {myRole === "DETECTIVE" && (
@@ -558,7 +559,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                   onClick={() => setTab("DETECTIVE_PRIVATE")}
                   className={`rounded-full px-3.5 py-1 text-xs font-bold transition ${
                     tab === "DETECTIVE_PRIVATE"
-                      ? "bg-blue-600 text-white shadow"
+                      ? "bg-blue-600 text-foreground shadow"
                       : "text-blue-400 hover:text-blue-300"
                   }`}
                 >
@@ -571,17 +572,17 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             {myRole && (
               <button
                 onClick={() => setCardOpen(true)}
-                className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] font-bold"
+                className="flex items-center gap-1 rounded-full border border-border bg-foreground/5 px-2.5 py-0.5 text-[11px] font-bold"
                 style={{ color: ROLES[myRole].tone }}
               >
                 <span>
                   {myRole === "WOLF"
-                    ? "🐺"
+                    ? ""
                     : myRole === "DETECTIVE"
-                      ? "🕵️"
+                      ? ""
                       : myRole === "DOCTOR"
-                        ? "➕"
-                        : "👤"}
+                        ? ""
+                        : ""}
                 </span>
                 <span>{t(`role.${myRole}.label`)}</span>
               </button>
@@ -598,6 +599,22 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             anonymous={tab === "WOLF_PRIVATE"}
             canWrite={me.is_alive}
             onSent={refresh}
+            feedOverride={
+              chatStyle === "bubbles" && tab === "GLOBAL" ? (
+                <div className="flex h-full items-center justify-center p-2">
+                  <SeatTable
+                    players={players}
+                    meId={me.user_id}
+                    messages={messages}
+                    selectable={isActionPhase}
+                    selectedId={selectedTargetPlayer?.user_id ?? null}
+                    speakerId={phase === "DAY_DISCUSSION" ? speaker_id : null}
+                    voteCounts={phase === "DAY_VOTING" ? voteCounts : {}}
+                    onSelect={(p) => handlePlayerTap(p.user_id)}
+                  />
+                </div>
+              ) : undefined
+            }
             onOpenVoiceCall={() => {
               if (!call.inCall) void call.join();
               setShowVoiceOverlay(true);
@@ -608,9 +625,12 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                 {phase === "DAY_DISCUSSION" && isSpeaker && me.is_alive && (
                   <button
                     onClick={() => void run(() => api.passTurn(roomId))}
-                    className="w-full rounded-2xl bg-amber-500 py-2.5 text-xs font-bold uppercase text-black shadow-md"
+                    className="flex w-full items-center justify-between rounded-2xl border border-border bg-accent px-4 py-2.5 text-xs font-semibold tracking-wide text-accent-foreground shadow-md transition hover:opacity-90 active:scale-[0.99]"
                   >
-                    {t("room.pass")}
+                    <span>{t("room.pass")}</span>
+                    <span className="rounded-full bg-background/25 px-2 py-0.5 tabular-nums">
+                      {secondsLeft}s
+                    </span>
                   </button>
                 )}
 
@@ -621,7 +641,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                       onClick={() => void run(() => api.readyToVote(roomId, !me.wants_vote))}
                       className={`w-full rounded-2xl py-2.5 text-xs font-bold uppercase transition ${
                         me.wants_vote
-                          ? "border border-white/20 bg-white/5 text-muted-foreground"
+                          ? "border border-border bg-foreground/5 text-muted-foreground"
                           : "bg-primary text-primary-foreground shadow-md"
                       }`}
                     >
@@ -705,7 +725,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
       <SettingsDrawer isOpen={showSettings} onClose={() => setShowSettings(false)} />
 
       {actionError && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 rounded-full bg-red-600 px-4 py-2 text-xs font-semibold text-white shadow-xl">
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 rounded-full bg-red-600 px-4 py-2 text-xs font-semibold text-foreground shadow-xl">
           {actionError}
         </div>
       )}

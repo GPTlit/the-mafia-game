@@ -130,25 +130,15 @@ export async function fetchProfileStats(
     id: userId,
     username: defaultUsername,
     avatar_url: defaultAvatar,
-    points: 240, // default starts at Enforcer
-    rank_tier: "ENFORCER",
-    matchesPlayed: 4,
-    matchesWon: 3,
-    wolfWins: 1,
-    townWins: 2,
-    doctorSaves: 1,
-    detectiveDiscoveries: 1,
+    points: 0,
+    rank_tier: "INFORMANT",
+    matchesPlayed: 0,
+    matchesWon: 0,
+    wolfWins: 0,
+    townWins: 0,
+    doctorSaves: 0,
+    detectiveDiscoveries: 0,
   };
-
-  try {
-    const rawLocal = localStorage.getItem(STORAGE_PREFIX + userId);
-    if (rawLocal) {
-      const parsed = JSON.parse(rawLocal);
-      Object.assign(fallback, parsed);
-    }
-  } catch {
-    // Ignore storage parse error
-  }
 
   try {
     const { data, error } = await supabase
@@ -190,170 +180,19 @@ export function saveProfileStats(stats: ProfileStats) {
 }
 
 export async function fetchMatchHistory(userId: string): Promise<MatchHistoryItem[]> {
-  const defaultHistory: MatchHistoryItem[] = [
-    {
-      id: "demo-1",
-      role: "WOLF",
-      won: true,
-      survived: true,
-      points_earned: 100,
-      rank_before: "INFORMANT",
-      rank_after: "ENFORCER",
-      created_at: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
-    },
-    {
-      id: "demo-2",
-      role: "DOCTOR",
-      won: true,
-      survived: true,
-      points_earned: 85,
-      rank_before: "ENFORCER",
-      rank_after: "ENFORCER",
-      created_at: new Date(Date.now() - 1000 * 60 * 60 * 20).toISOString(),
-    },
-    {
-      id: "demo-3",
-      role: "DETECTIVE",
-      won: false,
-      survived: false,
-      points_earned: 25,
-      rank_before: "ENFORCER",
-      rank_after: "ENFORCER",
-      created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
-    },
-  ];
-
-  try {
-    const rawLocal = localStorage.getItem(HISTORY_STORAGE_PREFIX + userId);
-    if (rawLocal) {
-      const parsed = JSON.parse(rawLocal);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-    }
-  } catch {
-    // Ignore
-  }
-
-  try {
-    const { data, error } = await supabase
-      .from("match_history")
-      .select("id, role, won, survived, points_earned, rank_before, rank_after, created_at")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(20);
-
-    if (!error && data && data.length > 0) {
-      const items: MatchHistoryItem[] = data.map((d) => ({
-        id: d.id,
-        role: (d.role as RoleKey) ?? null,
-        won: d.won,
-        survived: d.survived,
-        points_earned: d.points_earned,
-        rank_before: d.rank_before,
-        rank_after: d.rank_after,
-        created_at: d.created_at,
-      }));
-      localStorage.setItem(HISTORY_STORAGE_PREFIX + userId, JSON.stringify(items));
-      return items;
-    }
-  } catch {
-    // Fall back to default history
-  }
-
-  localStorage.setItem(HISTORY_STORAGE_PREFIX + userId, JSON.stringify(defaultHistory));
-  return defaultHistory;
+  const { data, error } = await supabase
+    .from("match_history")
+    .select("id, role, won, survived, points_earned, rank_before, rank_after, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(30);
+  if (error || !data) return [];
+  return data.map((d) => ({ ...d, role: (d.role as RoleKey) ?? null }));
 }
 
-export function awardPointsForMatch(
-  stats: ProfileStats,
-  outcome: {
-    roomId?: string;
-    won: boolean;
-    role: RoleKey | null;
-    survived: boolean;
-    doctorSaved?: boolean;
-    detectiveFoundWolf?: boolean;
-  },
-): { updated: ProfileStats; gained: number; reasons: string[] } {
-  let pts = 0;
-  const reasons: string[] = [];
-
-  if (outcome.won) {
-    pts += 50;
-    reasons.push("+50 Victory");
-    if (outcome.role === "WOLF") {
-      pts += 30;
-      reasons.push("+30 Wolf Pack Domination");
-    }
-  }
-
-  if (outcome.survived) {
-    pts += 20;
-    reasons.push("+20 Survived Until End");
-  }
-
-  if (outcome.doctorSaved) {
-    pts += 15;
-    reasons.push("+15 Timely Doctor Save");
-  }
-
-  if (outcome.detectiveFoundWolf) {
-    pts += 15;
-    reasons.push("+15 Detective Wolf Discovery");
-  }
-
-  if (pts === 0) {
-    pts = 10;
-    reasons.push("+10 Match Participation");
-  }
-
-  const newPoints = stats.points + pts;
-  const newTier = getRankTier(newPoints);
-
-  const updated: ProfileStats = {
-    ...stats,
-    points: newPoints,
-    rank_tier: newTier.key,
-    matchesPlayed: stats.matchesPlayed + 1,
-    matchesWon: stats.matchesWon + (outcome.won ? 1 : 0),
-    wolfWins: stats.wolfWins + (outcome.won && outcome.role === "WOLF" ? 1 : 0),
-    townWins: stats.townWins + (outcome.won && outcome.role !== "WOLF" ? 1 : 0),
-    doctorSaves: stats.doctorSaves + (outcome.doctorSaved ? 1 : 0),
-    detectiveDiscoveries: stats.detectiveDiscoveries + (outcome.detectiveFoundWolf ? 1 : 0),
-  };
-
-  saveProfileStats(updated);
-
-  // Append to match history
-  const historyItem: MatchHistoryItem = {
-    id: crypto.randomUUID(),
-    role: outcome.role,
-    won: outcome.won,
-    survived: outcome.survived,
-    points_earned: pts,
-    rank_before: stats.rank_tier,
-    rank_after: newTier.key,
-    created_at: new Date().toISOString(),
-  };
-
-  try {
-    const raw = localStorage.getItem(HISTORY_STORAGE_PREFIX + stats.id);
-    const existing: MatchHistoryItem[] = raw ? JSON.parse(raw) : [];
-    const merged = [historyItem, ...existing].slice(0, 30);
-    localStorage.setItem(HISTORY_STORAGE_PREFIX + stats.id, JSON.stringify(merged));
-  } catch {
-    // Ignore
-  }
-
-  // Persist to Supabase if connection is available
-  void supabase.rpc("award_match_points", {
-    p_user_id: stats.id,
-    p_room_id: outcome.roomId || "00000000-0000-0000-0000-000000000000",
-    p_won: outcome.won,
-    p_role: outcome.role ?? "CIVILIAN",
-    p_survived: outcome.survived,
-    p_doctor_saved: outcome.doctorSaved ?? false,
-    p_detective_found: outcome.detectiveFoundWolf ?? false,
-  });
-
-  return { updated, gained: pts, reasons };
+/** Asks the server to score a finished online match. Results are computed from the room itself. */
+export async function claimMatchReward(roomId: string): Promise<number> {
+  const { data, error } = await supabase.rpc("claim_match_reward", { p_room_id: roomId });
+  if (error) return 0;
+  return data ?? 0;
 }

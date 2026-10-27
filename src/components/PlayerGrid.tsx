@@ -46,10 +46,10 @@ export function PlayerGrid({
                   disabled={disabled}
                   onClick={() => onSelect?.(p.user_id)}
                   className={`flex flex-col items-center gap-1 rounded-2xl p-1.5 transition-all ${
-                    isSelected ? "scale-105 bg-white/10 ring-2" : "hover:bg-white/5 active:scale-95"
+                    isSelected ? "scale-105 bg-foreground/10 ring-2" : "hover:bg-foreground/5 active:scale-95"
                   } ${!p.is_alive ? "opacity-40 grayscale" : ""}`}
                   style={{
-                    ringColor: isSelected ? selectionColor : "transparent",
+                    ["--tw-ring-color" as string]: isSelected ? selectionColor : "transparent",
                     boxShadow: isSelected ? `0 0 16px ${selectionColor}40` : "none",
                   }}
                 >
@@ -61,30 +61,30 @@ export function PlayerGrid({
                     <img
                       src={p.avatar_url ?? ""}
                       alt={p.username}
-                      className="h-11 w-11 rounded-full border border-white/15 bg-secondary object-cover"
+                      className="h-11 w-11 rounded-full border border-border bg-secondary object-cover"
                     />
 
                     {/* Status badges */}
                     {!p.is_alive && (
-                      <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow">
-                        ✕
+                      <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-foreground shadow">
+                        
                       </span>
                     )}
 
                     {p.is_host && p.is_alive && (
                       <span className="absolute -top-1 -left-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] font-bold text-black shadow">
-                        ★
+                        
                       </span>
                     )}
 
                     {isSpeaker && (
                       <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-emerald-500 px-1 text-[8px] font-bold text-black shadow animate-bounce">
-                        🎙️
+                        
                       </span>
                     )}
 
                     {votes ? (
-                      <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[9px] font-bold text-white shadow">
+                      <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[9px] font-bold text-foreground shadow">
                         {votes}
                       </span>
                     ) : null}
@@ -100,7 +100,7 @@ export function PlayerGrid({
                   </div>
 
                   {/* Name label */}
-                  <span className="w-14 truncate text-center text-[10px] font-bold text-white">
+                  <span className="w-14 truncate text-center text-[10px] font-bold text-foreground">
                     {isMe ? (lang === "ar" ? "أنت" : "You") : p.username}
                   </span>
 
@@ -152,23 +152,23 @@ export function PlayerGrid({
               className={`w-full flex flex-col items-center rounded-2xl border p-2.5 transition-all ${
                 isSelected
                   ? "border-primary bg-primary/20 ring-2 ring-primary"
-                  : "border-white/10 bg-white/[0.03] hover:border-white/20"
+                  : "border-border bg-white/[0.03] hover:border-border"
               } ${!p.is_alive ? "opacity-40 grayscale" : ""}`}
             >
               <div className="relative">
                 <img
                   src={p.avatar_url ?? ""}
                   alt={p.username}
-                  className="h-12 w-12 rounded-full border border-white/15 bg-secondary object-cover"
+                  className="h-12 w-12 rounded-full border border-border bg-secondary object-cover"
                 />
                 {!p.is_alive && (
-                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
-                    ✕
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-foreground">
+                    
                   </span>
                 )}
                 {p.is_host && (
                   <span className="absolute -top-1 -left-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] font-bold text-black shadow">
-                    ★
+                    
                   </span>
                 )}
                 {showReady && p.is_alive && (
@@ -180,7 +180,7 @@ export function PlayerGrid({
                 )}
               </div>
 
-              <p className="mt-1.5 w-full truncate text-center text-xs font-bold text-white">
+              <p className="mt-1.5 w-full truncate text-center text-xs font-bold text-foreground">
                 {isMe ? `${p.username} (${lang === "ar" ? "أنت" : "You"})` : p.username}
               </p>
 

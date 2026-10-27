@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import {
@@ -78,12 +79,12 @@ export function ProfileModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 backdrop-blur-md animate-in fade-in">
-      <div className="relative flex max-h-[92dvh] w-full max-w-md flex-col rounded-3xl border border-white/10 bg-[#141620] text-foreground shadow-2xl overflow-hidden">
+      <div className="relative flex max-h-[92dvh] w-full max-w-md flex-col rounded-3xl border border-border bg-card text-foreground shadow-2xl overflow-hidden">
         {/* Modal Top Bar */}
-        <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-5 py-4">
+        <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4">
           <div className="flex items-center gap-2">
-            <span className="text-lg">👑</span>
-            <h2 className="text-sm font-bold text-white tracking-wide uppercase">
+            <span className="text-lg"></span>
+            <h2 className="text-sm font-bold text-foreground tracking-wide uppercase">
               {lang === "ar"
                 ? "الهيكل التنظيمي للمافيا"
                 : lang === "fr"
@@ -94,35 +95,35 @@ export function ProfileModal({
           <button
             onClick={onClose}
             aria-label="Close"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
           >
-            ✕
+            <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex shrink-0 border-b border-white/5 bg-white/[0.02] p-1.5">
+        <div className="flex shrink-0 border-b border-border bg-foreground/[0.02] p-1.5">
           <button
             type="button"
             onClick={() => setActiveTab("stats")}
             className={`flex-1 rounded-xl py-2 text-xs font-bold transition ${
               activeTab === "stats"
-                ? "bg-white/10 text-white shadow"
-                : "text-muted-foreground hover:text-white"
+                ? "bg-foreground/10 text-foreground shadow"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            {lang === "ar" ? "📊 الرتبة والإحصائيات" : "📊 Hierarchy & Stats"}
+            {lang === "ar" ? " الرتبة والإحصائيات" : " Hierarchy & Stats"}
           </button>
           <button
             type="button"
             onClick={() => setActiveTab("history")}
             className={`flex-1 rounded-xl py-2 text-xs font-bold transition ${
               activeTab === "history"
-                ? "bg-white/10 text-white shadow"
-                : "text-muted-foreground hover:text-white"
+                ? "bg-foreground/10 text-foreground shadow"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            {lang === "ar" ? "📜 سجل المباريات" : "📜 Match History"}
+            {lang === "ar" ? " سجل المباريات" : " Match History"}
           </button>
         </div>
 
@@ -140,7 +141,7 @@ export function ProfileModal({
                   <img
                     src={stats.avatar_url || avatarUrl}
                     alt={stats.username}
-                    className="relative h-20 w-20 rounded-full border-2 border-white/20 bg-secondary object-cover"
+                    className="relative h-20 w-20 rounded-full border-2 border-border bg-secondary object-cover"
                   />
                   <span
                     className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-[#141620] text-sm shadow-md"
@@ -150,7 +151,7 @@ export function ProfileModal({
                   </span>
                 </div>
 
-                <h3 className="mt-3 text-lg font-bold text-white tracking-tight">
+                <h3 className="mt-3 text-lg font-bold text-foreground tracking-tight">
                   {stats.username}
                 </h3>
 
@@ -169,7 +170,7 @@ export function ProfileModal({
               </div>
 
               {/* Points & Next Tier Progress */}
-              <div className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
+              <div className="rounded-2xl border border-border bg-white/[0.03] p-4">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-semibold text-muted-foreground">
                     {lang === "ar"
@@ -187,7 +188,7 @@ export function ProfileModal({
                 </div>
 
                 {/* Progress bar */}
-                <div className="mt-2.5 h-3 w-full overflow-hidden rounded-full bg-white/10 p-0.5">
+                <div className="mt-2.5 h-3 w-full overflow-hidden rounded-full bg-foreground/10 p-0.5">
                   <div
                     className="h-full rounded-full transition-all duration-500 shadow-sm"
                     style={{
@@ -200,7 +201,7 @@ export function ProfileModal({
                 <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
                   <span>{tierTitle}</span>
                   {nextTierTitle ? (
-                    <span className="font-semibold text-white/90">
+                    <span className="font-semibold text-foreground/90">
                       {lang === "ar"
                         ? `باقي ${pointsToNext} نقطة للترقية لـ ${nextTierTitle}`
                         : `${pointsToNext} XP to ${nextTierTitle}`}
@@ -215,7 +216,7 @@ export function ProfileModal({
 
               {/* Main Stats Counters */}
               <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-3">
+                <div className="rounded-2xl border border-border bg-foreground/[0.02] p-3">
                   <p className="text-[10px] font-bold text-muted-foreground uppercase">
                     {lang === "ar" ? "نسبة الفوز" : "Win Rate"}
                   </p>
@@ -223,15 +224,15 @@ export function ProfileModal({
                     {winRate}%
                   </p>
                 </div>
-                <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-3">
+                <div className="rounded-2xl border border-border bg-foreground/[0.02] p-3">
                   <p className="text-[10px] font-bold text-muted-foreground uppercase">
                     {lang === "ar" ? "المباريات" : "Matches"}
                   </p>
-                  <p className="mt-1 text-xl font-black text-white tabular-nums">
+                  <p className="mt-1 text-xl font-black text-foreground tabular-nums">
                     {stats.matchesPlayed}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-3">
+                <div className="rounded-2xl border border-border bg-foreground/[0.02] p-3">
                   <p className="text-[10px] font-bold text-muted-foreground uppercase">
                     {lang === "ar" ? "فوز الذئاب" : "Wolf Wins"}
                   </p>
@@ -242,12 +243,12 @@ export function ProfileModal({
               </div>
 
               {/* Detailed Breakdown */}
-              <div className="space-y-2 rounded-2xl border border-white/5 bg-white/[0.02] p-3.5 text-xs">
+              <div className="space-y-2 rounded-2xl border border-border bg-foreground/[0.02] p-3.5 text-xs">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">
                     {lang === "ar" ? "انتصارات القرية (المدنيين)" : "Town Victories"}
                   </span>
-                  <span className="font-bold text-white tabular-nums">{stats.townWins}</span>
+                  <span className="font-bold text-foreground tabular-nums">{stats.townWins}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">
@@ -268,7 +269,7 @@ export function ProfileModal({
               </div>
 
               {/* Full Hierarchy Ranks Ladder */}
-              <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-3.5">
+              <div className="rounded-2xl border border-border bg-foreground/[0.02] p-3.5">
                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">
                   {lang === "ar" ? "درجات الرتب في السنديكات" : "Syndicate Tier Ladder"}
                 </p>
@@ -282,7 +283,7 @@ export function ProfileModal({
                         key={tier.key}
                         className={`flex items-center justify-between rounded-xl px-3 py-2 text-xs transition ${
                           isCurrent
-                            ? "border border-white/20 bg-white/10 font-bold"
+                            ? "border border-border bg-foreground/10 font-bold"
                             : "opacity-60 bg-white/[0.01]"
                         }`}
                       >
@@ -290,7 +291,7 @@ export function ProfileModal({
                           <span className="text-base">{tier.badge}</span>
                           <span style={{ color: tier.color }}>{tierName}</span>
                           {isCurrent && (
-                            <span className="rounded-full bg-white/20 px-2 py-0.5 text-[9px] text-white">
+                            <span className="rounded-full bg-foreground/20 px-2 py-0.5 text-[9px] text-foreground">
                               {lang === "ar" ? "رتبتك الحالية" : "Current"}
                             </span>
                           )}
@@ -310,7 +311,7 @@ export function ProfileModal({
             <div className="space-y-2.5">
               {history.length === 0 ? (
                 <div className="py-12 text-center text-xs text-muted-foreground">
-                  <span className="text-2xl">📜</span>
+                  
                   <p className="mt-2">
                     {lang === "ar" ? "لا توجد مباريات مسجلة بعد." : "No matches recorded yet."}
                   </p>
@@ -322,7 +323,7 @@ export function ProfileModal({
                   return (
                     <div
                       key={m.id}
-                      className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.02] p-3 text-xs"
+                      className="flex items-center justify-between rounded-2xl border border-border bg-foreground/[0.02] p-3 text-xs"
                     >
                       <div className="flex items-center gap-2.5">
                         <div
@@ -334,7 +335,7 @@ export function ProfileModal({
                             color: m.won ? "#10b981" : "#ef4444",
                           }}
                         >
-                          {m.won ? "🏆" : "💀"}
+                          {m.won ? "" : ""}
                         </div>
                         <div>
                           <div className="flex items-center gap-1.5">
@@ -390,7 +391,7 @@ export function ProfileModal({
         </div>
 
         {/* Modal Bottom Bar */}
-        <div className="shrink-0 border-t border-white/10 bg-[#141620] p-4 text-center">
+        <div className="shrink-0 border-t border-border bg-card p-4 text-center">
           <button
             onClick={onClose}
             className="w-full rounded-2xl bg-white py-3 text-xs font-black tracking-widest uppercase text-black shadow-lg transition active:scale-95"
