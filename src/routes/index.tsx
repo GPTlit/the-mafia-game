@@ -18,14 +18,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Multiplayer social deduction game: wolves hunt at night, the detective investigates, the doctor heals, and the town votes by day. Talk · Trust · Survive.",
+          "Multiplayer social deduction game: wolves hunt at night, the detective investigates, the doctor heals, and the town votes by day. Talk · Think · Survive.",
       },
       { property: "og:title", content: "THE MAFIA — Trust No One" },
       {
         property: "og:description",
         content: "Create a room, invite 6-15 players, and survive the night.",
       },
-      { property: "og:image", content: "/logo.png" },
     ],
   }),
   component: Index,
@@ -133,7 +132,7 @@ function Index() {
             {ar ? "لا تثق بأحد" : "Trust No One"}
           </p>
           <p className="mt-3.5 text-xl text-[#7a3a3d]">
-            {ar ? "تكلّم · ثق · انجُ" : "Talk · Trust · Survive"}
+            {ar ? "تكلّم · فكّر · انجُ" : "Talk · Think · Survive"}
           </p>
         </div>
       </section>
