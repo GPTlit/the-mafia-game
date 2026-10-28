@@ -164,6 +164,39 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
     if (state?.room.current_phase === "ROLE_DISTRIBUTION") setCardOpen(true);
   }, [state?.room.current_phase]);
 
+  // Host start countdown (3, 2, 1) broadcast to everyone in the room
+  const [startCount, setStartCount] = useState<number | null>(null);
+  const meReady = state?.me.is_ready;
+  const meReadyRef = useRef(meReady);
+  meReadyRef.current = meReady;
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  useEffect(() => {
+    const ch = supabase.channel(`start-countdown:${roomId}`);
+    ch.on("broadcast", { event: "countdown" }, () => {
+      if (!meReadyRef.current) void api.setReady(roomId, true).catch(() => {});
+      setStartCount(3);
+    }).subscribe();
+    channelRef.current = ch;
+    return () => {
+      void supabase.removeChannel(ch);
+    };
+  }, [roomId]);
+  useEffect(() => {
+    if (startCount === null) return;
+    if (startCount === 0) {
+      setStartCount(null);
+      return;
+    }
+    const id = setTimeout(() => setStartCount((c) => (c === null ? null : c - 1)), 1000);
+    return () => clearTimeout(id);
+  }, [startCount]);
+  const hostStart = async () => {
+    if (!meReadyRef.current) await api.setReady(roomId, true).catch(() => {});
+    await channelRef.current?.send({ type: "broadcast", event: "countdown", payload: {} });
+    setStartCount(3);
+    setTimeout(() => void run(() => api.startGame(roomId)), 3200);
+  };
+
   const copyCode = () => {
     void navigator.clipboard.writeText(code);
     setCopied(true);
