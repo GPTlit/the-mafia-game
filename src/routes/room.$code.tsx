@@ -476,7 +476,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
               className="w-full pb-1 text-center text-xs text-[#8c857a]"
             >
               {lang === "ar" ? "رمز الغرفة" : "Room code"}: <b className="tracking-[0.25em] text-[#efe4cf]">{code}</b>
-              {copied ? " ✓" : ""}
+              {copied ? (lang === "ar" ? " · نُسخ" : " · Copied") : ""}
             </button>
           </div>
         </section>

@@ -42,7 +42,7 @@ export function VoiceCallOverlay({
       <div className="mx-auto flex w-full max-w-lg flex-col">
         <div className="rounded-[22px] bg-[#1c1c1d] py-3 text-center">
           <h3 className="text-2xl font-medium">
-            {ar ? "الليل - المافيا تستيقظ" : "Night - The Mafia wakes"} ☽
+            {ar ? "الليل - المافيا تستيقظ" : "Night - The Mafia wakes"}
           </h3>
           <p dir="ltr" className="mt-2 text-base text-[#b9b2a6]">
             Night Phase • Voice Chat • {Math.max(peerCount + 1, 1)} Players
