@@ -27,6 +27,14 @@ export function seatPositions(n: number): { x: number; y: number }[] {
 
 const BUBBLE_MS = 8000;
 
+/** Name sits beside the seat, one step along the table edge (no avatar, no badge). */
+function nameOffset(i: number, n: number) {
+  const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
+  const dx = -Math.sin(a) * 3.4;
+  const dy = Math.cos(a) * 1.6;
+  return `translate(calc(-50% + ${dx.toFixed(2)}rem), calc(-50% + ${dy.toFixed(2)}rem))`;
+}
+
 export function SeatTable({
   players,
   meId,
@@ -36,6 +44,7 @@ export function SeatTable({
   speakerId,
   voteCounts = {},
   onSelect,
+  variant = "day",
 }: {
   players: Player[];
   meId: string;
@@ -45,6 +54,7 @@ export function SeatTable({
   speakerId?: string | null;
   voteCounts?: Record<string, number>;
   onSelect?: (p: Player) => void;
+  variant?: "day" | "night";
 }) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -62,60 +72,51 @@ export function SeatTable({
   }
 
   return (
-    <div className="relative mx-auto aspect-[9/14] w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-card">
+    <div className="relative mx-auto aspect-[9/14] w-full overflow-hidden bg-black">
       <img
         src={TABLES[n]}
         alt=""
-        className="absolute inset-0 h-full w-full object-cover object-[50%_58%] scale-[1.15]"
+        className={`absolute inset-0 h-full w-full object-cover object-[50%_58%] ${
+          variant === "night" ? "brightness-[0.55] saturate-[0.8]" : ""
+        }`}
         loading="eager"
         decoding="async"
       />
-      <div className="absolute inset-0 bg-background/10" />
       {players.map((p, i) => {
         const pt = pos[i]!;
         const msg = latest[p.user_id];
         const fresh = msg && now - new Date(msg.created_at).getTime() < BUBBLE_MS;
         const isMe = p.user_id === meId;
         const sel = selectedId === p.user_id;
+        const speaking = speakerId === p.user_id;
         return (
           <div
             key={p.user_id}
-            className="absolute -translate-x-1/2 -translate-y-1/2"
+            className="absolute"
             style={{ left: `${pt.x}%`, top: `${pt.y}%` }}
           >
+            {variant === "night" && speaking && (
+              <span className="pointer-events-none absolute left-0 top-0 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#f0e2c4]/25 blur-2xl" />
+            )}
             {fresh && (
-              <div className="absolute bottom-full left-1/2 mb-1 w-max max-w-[9rem] -translate-x-1/2 animate-in fade-in zoom-in-95 rounded-2xl bg-paper px-2.5 py-1.5 text-[11px] font-medium leading-snug text-paper-foreground shadow-lg">
+              <div className="absolute bottom-full left-0 mb-3 w-max max-w-[10rem] -translate-x-1/2 animate-in fade-in zoom-in-95 rounded-2xl bg-[#efe4cf] px-3 py-2 text-xs font-medium leading-snug text-[#111] shadow-lg">
                 {msg.content ?? "..."}
-                <span className="absolute left-1/2 top-full -translate-x-1/2 border-x-[6px] border-t-[6px] border-x-transparent border-t-paper" />
+                <span className="absolute left-1/2 top-full -translate-x-1/2 border-x-[7px] border-t-[7px] border-x-transparent border-t-[#efe4cf]" />
               </div>
             )}
             <button
               type="button"
               disabled={!selectable || !p.is_alive}
               onClick={() => onSelect?.(p)}
-              className={`flex flex-col items-center gap-0.5 rounded-full transition ${
-                p.is_alive ? "" : "opacity-40 grayscale"
-              } ${selectable && p.is_alive ? "cursor-pointer hover:scale-105" : ""}`}
+              style={{ transform: nameOffset(i, players.length) }}
+              className={`absolute left-0 top-0 whitespace-nowrap text-[13px] font-semibold text-[#efe4cf] [text-shadow:0_1px_6px_#000,0_0_3px_#000] transition ${
+                p.is_alive ? "" : "line-through opacity-50"
+              } ${sel ? "text-[#ff9aa0] underline underline-offset-4" : ""} ${
+                selectable && p.is_alive ? "cursor-pointer" : ""
+              }`}
             >
-              <span
-                className={`block h-9 w-9 overflow-hidden rounded-full border-2 bg-secondary ${
-                  sel
-                    ? "border-primary ring-2 ring-primary/60"
-                    : speakerId === p.user_id
-                      ? "border-accent ring-2 ring-accent/60"
-                      : isMe
-                        ? "border-foreground/70"
-                        : "border-border"
-                }`}
-              >
-                {p.avatar_url && (
-                  <img src={p.avatar_url} alt="" className="h-full w-full object-cover" />
-                )}
-              </span>
-              <span className="max-w-[5.5rem] truncate rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-semibold text-foreground">
-                {p.username}
-                {voteCounts[p.user_id] ? ` · ${voteCounts[p.user_id]}` : ""}
-              </span>
+              {isMe ? `${p.username} •` : p.username}
+              {voteCounts[p.user_id] ? ` · ${voteCounts[p.user_id]}` : ""}
             </button>
           </div>
         );
