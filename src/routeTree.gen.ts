@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OfflineRouteImport } from './routes/offline'
+import { Route as ApiNarrateRouteImport } from './routes/api/narrate'
 import { Route as RoomCodeRouteImport } from './routes/room.$code'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const OfflineRoute = OfflineRouteImport.update({
   path: '/offline',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiNarrateRoute = ApiNarrateRouteImport.update({
+  id: '/api/narrate',
+  path: '/api/narrate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RoomCodeRoute = RoomCodeRouteImport.update({
   id: '/room/$code',
   path: '/room/$code',
@@ -32,30 +38,34 @@ const RoomCodeRoute = RoomCodeRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/offline': typeof OfflineRoute
+  '/api/narrate': typeof ApiNarrateRoute
   '/room/$code': typeof RoomCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/offline': typeof OfflineRoute
+  '/api/narrate': typeof ApiNarrateRoute
   '/room/$code': typeof RoomCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/offline': typeof OfflineRoute
+  '/api/narrate': typeof ApiNarrateRoute
   '/room/$code': typeof RoomCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/offline' | '/room/$code'
+  fullPaths: '/' | '/offline' | '/api/narrate' | '/room/$code'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/offline' | '/room/$code'
-  id: '__root__' | '/' | '/offline' | '/room/$code'
+  to: '/' | '/offline' | '/api/narrate' | '/room/$code'
+  id: '__root__' | '/' | '/offline' | '/api/narrate' | '/room/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   OfflineRoute: typeof OfflineRoute
+  ApiNarrateRoute: typeof ApiNarrateRoute
   RoomCodeRoute: typeof RoomCodeRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfflineRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/narrate': {
+      id: '/api/narrate'
+      path: '/api/narrate'
+      fullPath: '/api/narrate'
+      preLoaderRoute: typeof ApiNarrateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/room/$code': {
       id: '/room/$code'
       path: '/room/$code'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   OfflineRoute: OfflineRoute,
+  ApiNarrateRoute: ApiNarrateRoute,
   RoomCodeRoute: RoomCodeRoute,
 }
 export const routeTree = rootRouteImport

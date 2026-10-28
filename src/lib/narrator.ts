@@ -11,9 +11,7 @@ export function isNarratorMuted(): boolean {
 export function setNarratorMuted(muted: boolean) {
   if (typeof window === "undefined") return;
   localStorage.setItem(NARRATOR_STORAGE_KEY, muted ? "true" : "false");
-  if (muted && "speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
-  }
+  if (muted) stopNarrator();
 }
 
 const PHRASE_MAP: Record<
@@ -65,7 +63,7 @@ const PHRASE_MAP: Record<
 let lastSpokenPhase: string | null = null;
 
 export function speakPhase(phase: Phase | "GAME_START" | "WOLVES_WIN" | "TOWN_WIN", lang: Lang) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  if (typeof window === "undefined") return;
   if (isNarratorMuted()) return;
 
   const key = `${phase}_${lang}`;
@@ -75,6 +73,38 @@ export function speakPhase(phase: Phase | "GAME_START" | "WOLVES_WIN" | "TOWN_WI
   const text = PHRASE_MAP[lang]?.[phase] || PHRASE_MAP.en[phase];
   if (!text) return;
 
+  void playEleven(text).catch(() => speakBrowser(text, lang));
+}
+
+let current: HTMLAudioElement | null = null;
+const cache = new Map<string, string>();
+
+async function playEleven(text: string) {
+  let url = cache.get(text);
+  if (!url) {
+    const res = await fetch("/api/narrate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    if (!res.ok) throw new Error(`narrate ${res.status}`);
+    url = URL.createObjectURL(await res.blob());
+    cache.set(text, url);
+  }
+  if (isNarratorMuted()) return;
+  current?.pause();
+  current = new Audio(url);
+  await current.play();
+}
+
+export function stopNarrator() {
+  current?.pause();
+  current = null;
+  if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel();
+}
+
+function speakBrowser(text: string, lang: Lang) {
+  if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(text);

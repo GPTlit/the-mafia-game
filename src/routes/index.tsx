@@ -1,4 +1,4 @@
-import { Settings, X } from "lucide-react";
+import { Bell, CirclePlus, Dog, Search, Settings, User, X } from "lucide-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,9 +6,9 @@ import { useSession } from "@/hooks/useSession";
 import { AuthPanel } from "@/components/AuthPanel";
 import { ProfileModal } from "@/components/ProfileModal";
 import { SettingsDrawer } from "@/components/SettingsDrawer";
-import { api, AVATARS } from "@/lib/game";
-import { fetchProfileStats, getRankTier, type ProfileStats } from "@/lib/profile";
-import { ROLES, type RoleKey } from "@/lib/roles";
+import { api } from "@/lib/game";
+import { fetchProfileStats, type ProfileStats } from "@/lib/profile";
+import type { RoleKey } from "@/lib/roles";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
@@ -18,14 +18,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Multiplayer social deduction game: wolves hunt at night, the detective investigates, the doctor heals, and the town votes by day. Talk · Trust · Survive.",
+          "Multiplayer social deduction game: wolves hunt at night, the detective investigates, the doctor heals, and the town votes by day. Talk · Think · Survive.",
       },
       { property: "og:title", content: "THE MAFIA — Trust No One" },
       {
         property: "og:description",
         content: "Create a room, invite 6-15 players, and survive the night.",
       },
-      { property: "og:image", content: "/logo.png" },
     ],
   }),
   component: Index,
@@ -83,184 +82,120 @@ function Index() {
     }
   }
 
-  const rankTier = profileStats ? getRankTier(profileStats.points) : null;
+  const ar = lang === "ar";
+  const roleCards: { k: RoleKey; Icon: typeof User }[] = [
+    { k: "WOLF", Icon: Dog },
+    { k: "DETECTIVE", Icon: Search },
+    { k: "DOCTOR", Icon: CirclePlus },
+    { k: "CIVILIAN", Icon: User },
+  ];
+  const panel = "rounded-[22px] bg-[#1c1c1d] shadow-[0_2px_10px_#0008]";
 
   return (
-    <main className="mx-auto flex min-h-[100dvh] max-w-md flex-col justify-between px-4 py-5 select-none">
-      {/* Top Navigation Bar */}
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <img
-            src="/logo.png"
-            alt="THE MAFIA"
-            className="h-10 w-10 rounded-2xl border border-red-500/30 object-cover shadow-lg shadow-red-950/40"
-          />
-          <div>
-            <span className="wordmark text-lg font-black tracking-wider text-foreground">MAFIA</span>
-            <p className="text-[9px] font-bold tracking-[0.2em] text-red-500 uppercase">
-              {lang === "ar" ? "لا تثق بأحد" : "TRUST NO ONE"}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {session && profileStats ? (
-            <button
-              onClick={() => setShowProfile(true)}
-              className="flex items-center gap-1.5 rounded-full border border-border bg-foreground/5 py-1 ps-1.5 pe-3 text-xs font-semibold text-foreground shadow hover:bg-foreground/10 transition"
-            >
-              <img
-                src={profileStats.avatar_url || AVATARS[0]!}
-                alt="Profile"
-                className="h-6 w-6 rounded-full border border-border object-cover"
-              />
-              <span className="text-[11px] font-bold" style={{ color: rankTier?.color }}>
-                {profileStats.points}
-              </span>
-            </button>
-          ) : (
-            <button
-              onClick={() => setShowAuthModal(true)}
-              className="rounded-full bg-foreground/10 px-3 py-1.5 text-xs font-bold text-foreground hover:bg-foreground/20 transition"
-            >
-              {lang === "ar" ? "تسجيل الدخول" : "Sign In"}
-            </button>
-          )}
-
+    <main
+      dir="ltr"
+      className="relative mx-auto flex min-h-[100dvh] w-full max-w-md flex-col bg-[#0b0b0c] px-3 pb-4 pt-3 text-[#efe4cf] select-none"
+      style={{
+        backgroundImage:
+          "repeating-linear-gradient(115deg, transparent 0 46px, #6a1f2622 46px 47px), repeating-linear-gradient(62deg, transparent 0 71px, #6a1f2618 71px 72px)",
+      }}
+    >
+      {/* Top bar: gear + bell on the left, MAFIA on the right */}
+      <header className={`flex h-[68px] items-center justify-between px-5 ${panel}`}>
+        <div className="flex items-center gap-5 text-[#8c857a]">
+          <button onClick={() => setShowSettings(true)} aria-label="Settings">
+            <Settings className="h-6 w-6" strokeWidth={1.4} />
+          </button>
           <button
-            onClick={() => setShowSettings(true)}
-            aria-label="Settings"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground transition"
+            onClick={() => (session ? setShowProfile(true) : setShowAuthModal(true))}
+            aria-label="Notifications"
           >
-            <Settings className="h-4 w-4" />
+            <Bell className="h-6 w-6" strokeWidth={1.4} />
           </button>
         </div>
+        <span className="font-serif text-[34px] tracking-wide">MAFIA</span>
       </header>
 
-      {/* Hero Visual Section matching the prototype collage */}
-      <section className="flex flex-col items-center text-center my-auto py-4">
+      {/* Hero: moon card left, title right */}
+      <section className="mt-7 flex items-center gap-3.5">
         <img
-          src="/logo.png"
-          alt="THE MAFIA"
-          className="mb-4 h-40 w-40 object-contain drop-shadow-2xl sm:h-48 sm:w-48"
+          src="/cards/hero-moon.jpg"
+          alt=""
+          className="aspect-[515/790] w-[47%] rounded-xl border border-[#5a2a30] bg-[#4a1f26] object-cover shadow-[0_6px_20px_#000a]"
           fetchPriority="high"
         />
-
-        <h1 className="wordmark text-4xl sm:text-5xl font-black tracking-wider text-foreground">
-          MAFIA
-        </h1>
-        <p className="mt-1 text-xs font-bold tracking-[0.25em] text-red-500 uppercase">
-          {lang === "ar" ? "لا تثق بأحد" : "TRUST NO ONE"}
-        </p>
-
-        {/* Real role cards */}
-        <div className="mt-6 grid w-full max-w-xs grid-cols-4 gap-2">
-          {(["CIVILIAN", "DOCTOR", "DETECTIVE", "WOLF"] as RoleKey[]).map((k) => (
-            <button
-              key={k}
-              type="button"
-              onClick={() => setShowSettings(true)}
-              className="group overflow-hidden rounded-xl border border-border bg-card shadow-md transition-transform hover:-translate-y-0.5"
-            >
-              <img
-                src={ROLES[k].art}
-                alt={t(`role.${k}.label`)}
-                className="aspect-[5/7] w-full object-cover"
-                loading="eager"
-                decoding="async"
-              />
-              <span className="block py-1 text-[10px] font-semibold tracking-wide text-foreground">
-                {t(`role.${k}.label`)}
-              </span>
-            </button>
-          ))}
+        <div className="flex-1 text-center" dir={ar ? "rtl" : "ltr"}>
+          <h1 dir="ltr" className="font-serif text-[52px] font-medium leading-none">
+            MAFIA
+          </h1>
+          <p className="mt-2.5 text-[30px] font-semibold leading-tight">
+            {ar ? "لا تثق بأحد" : "Trust No One"}
+          </p>
+          <p className="mt-3.5 text-xl text-[#7a3a3d]">
+            {ar ? "تكلّم · فكّر · انجُ" : "Talk · Think · Survive"}
+          </p>
         </div>
-
-        <p className="mt-5 text-xs font-medium text-muted-foreground tracking-wide">
-          {lang === "ar" ? "تكلّم · ثِق · انجُ" : "Talk · Trust · Survive"}
-        </p>
-
-        {/* Big Play CTA */}
-        <div className="mt-6 w-full max-w-xs space-y-2.5">
-          <button
-            onClick={() => {
-              if (!session) setShowAuthModal(true);
-              else void create();
-            }}
-            disabled={busy}
-            className="w-full rounded-2xl bg-white py-3.5 text-sm font-black tracking-widest uppercase text-black shadow-xl shadow-white/10 transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
-          >
-            {busy ? t("common.wait") : lang === "ar" ? "العب الآن" : "Play Now"}
-          </button>
-
-          <div className="flex gap-2">
-            <button
-              onClick={() => setActiveTab(activeTab === "join" ? "lobby" : "join")}
-              className="flex-1 rounded-xl border border-border bg-foreground/5 py-2.5 text-xs font-bold text-foreground hover:bg-foreground/10 transition"
-            >
-              {lang === "ar" ? "انضمام برمز" : "Join Code"}
-            </button>
-            <Link
-              to="/offline"
-              className="flex-1 rounded-xl border border-border bg-foreground/5 py-2.5 text-xs font-bold text-center text-foreground hover:bg-foreground/10 transition"
-            >
-              {lang === "ar" ? "تدريب فردي" : "Solo Practice"}
-            </Link>
-          </div>
-        </div>
-
-        {/* Join drawer/input if clicked */}
-        {activeTab === "join" && (
-          <div className="mt-4 flex w-full max-w-xs gap-2 animate-in fade-in">
-            <input
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder={lang === "ar" ? "رمز الغرفة" : "ROOM CODE"}
-              maxLength={5}
-              className="flex-1 rounded-xl border border-border bg-foreground/5 px-3 py-2 text-center text-sm font-bold tracking-[0.25em] text-foreground outline-none focus:border-red-500"
-            />
-            <button
-              onClick={() => void join()}
-              disabled={busy || code.trim().length < 4}
-              className="rounded-xl bg-red-600 px-4 text-xs font-bold uppercase text-foreground disabled:opacity-40"
-            >
-              {lang === "ar" ? "انضم" : "Join"}
-            </button>
-          </div>
-        )}
-
-        {error && <p className="mt-3 text-xs text-red-400">{error}</p>}
       </section>
 
-      {/* Modes & Role Rules Bottom Sheet Card */}
-      <section className="mt-auto rounded-3xl border border-border bg-black/40 p-4 backdrop-blur-md">
-        <div className="flex items-center justify-between pb-2 border-b border-border">
-          <span className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
-            {lang === "ar" ? "أنماط اللعب والأدوار" : "Game Modes & Roles"}
-          </span>
+      {/* Role tiles: icon + label only */}
+      <section className="mt-8 grid grid-cols-4 gap-2.5">
+        {roleCards.map(({ k, Icon }) => (
           <button
+            key={k}
+            type="button"
             onClick={() => setShowSettings(true)}
-            className="text-[11px] font-semibold text-red-400 underline"
+            className="flex aspect-[0.7] flex-col items-center justify-center gap-3.5 rounded-2xl border border-[#3a3836] bg-[#1c1c1d] text-[15px] shadow-[inset_0_0_0_4px_#1c1c1d,inset_0_0_0_5px_#2b2927]"
           >
-            {lang === "ar" ? "عرض التفاصيل" : "View Details"}
+            <Icon className="h-9 w-9 text-[#8c857a]" strokeWidth={1.3} />
+            <span dir={ar ? "rtl" : "ltr"}>{t(`role.${k}.label`)}</span>
+          </button>
+        ))}
+      </section>
+
+      <div className="min-h-6 flex-1" />
+
+      <button
+        onClick={() => void create()}
+        disabled={busy}
+        className="h-[68px] w-full rounded-[18px] bg-[#efe4cf] text-2xl font-medium text-[#111] transition active:scale-[0.98] disabled:opacity-50"
+      >
+        {busy ? t("common.wait") : ar ? "العب الآن" : "Play Now"}
+      </button>
+
+      <div className="mt-3 grid grid-cols-2 gap-2.5">
+        <Link
+          to="/offline"
+          className="flex h-14 items-center justify-center rounded-[18px] border border-[#3a3836] bg-[#1c1c1d] text-[17px]"
+        >
+          {ar ? "تدريب فردي" : "Solo Practice"}
+        </Link>
+        <button
+          onClick={() => setActiveTab(activeTab === "join" ? "lobby" : "join")}
+          className="h-14 rounded-[18px] border border-[#3a3836] bg-[#1c1c1d] text-[17px]"
+        >
+          {ar ? "انضمام برمز" : "Join Code"}
+        </button>
+      </div>
+
+      {activeTab === "join" && (
+        <div className="mt-3 flex w-full gap-2 animate-in fade-in">
+          <input
+            value={code}
+            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            placeholder={ar ? "رمز الغرفة" : "ROOM CODE"}
+            maxLength={5}
+            className="flex-1 rounded-[14px] border border-[#3a3836] bg-[#1c1c1d] px-3 py-3 text-center text-sm font-bold tracking-[0.25em] outline-none focus:border-[#8a2a2d]"
+          />
+          <button
+            onClick={() => void join()}
+            disabled={busy || code.trim().length < 4}
+            className="rounded-[14px] bg-[#6b2f37] px-5 text-sm font-bold disabled:opacity-40"
+          >
+            {ar ? "انضم" : "Join"}
           </button>
         </div>
-
-        <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
-          <div className="rounded-xl border border-border bg-foreground/[0.02] p-2">
-            <p className="text-[11px] font-bold text-foreground">4–5</p>
-            <p className="mt-0.5 text-[9px] text-muted-foreground">1 Wolf · 1 Det · 1 Doc</p>
-          </div>
-          <div className="rounded-xl border border-border bg-foreground/[0.02] p-2">
-            <p className="text-[11px] font-bold text-foreground">6–8</p>
-            <p className="mt-0.5 text-[9px] text-muted-foreground">2 Wolves · 1 Det · 1 Doc</p>
-          </div>
-          <div className="rounded-xl border border-border bg-foreground/[0.02] p-2">
-            <p className="text-[11px] font-bold text-foreground">9+</p>
-            <p className="mt-0.5 text-[9px] text-muted-foreground">3 Wolves · Remainder Civ</p>
-          </div>
-        </div>
-      </section>
+      )}
+      {error && <p className="mt-3 text-center text-xs text-red-400">{error}</p>}
 
       {/* Modals & Drawers */}
       {showAuthModal && (

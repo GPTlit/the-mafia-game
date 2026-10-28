@@ -1,4 +1,4 @@
-import { ArrowLeft, Settings, X, Lock } from "lucide-react";
+import { ArrowLeft, Settings, X, Lock, User } from "lucide-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -114,8 +114,6 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
   const [profileStats, setProfileStats] = useState<ProfileStats | null>(null);
   const [matchAwarded, setMatchAwarded] = useState(false);
 
-  // Lobby mode selection
-  const [gameMode, setGameMode] = useState<"ONLINE" | "HYBRID" | "SOLO">("HYBRID");
 
   useEffect(() => {
     if (session) {
@@ -165,6 +163,39 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
   useEffect(() => {
     if (state?.room.current_phase === "ROLE_DISTRIBUTION") setCardOpen(true);
   }, [state?.room.current_phase]);
+
+  // Host start countdown (3, 2, 1) broadcast to everyone in the room
+  const [startCount, setStartCount] = useState<number | null>(null);
+  const meReady = state?.me.is_ready;
+  const meReadyRef = useRef(meReady);
+  meReadyRef.current = meReady;
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  useEffect(() => {
+    const ch = supabase.channel(`start-countdown:${roomId}`);
+    ch.on("broadcast", { event: "countdown" }, () => {
+      if (!meReadyRef.current) void api.setReady(roomId, true).catch(() => {});
+      setStartCount(3);
+    }).subscribe();
+    channelRef.current = ch;
+    return () => {
+      void supabase.removeChannel(ch);
+    };
+  }, [roomId]);
+  useEffect(() => {
+    if (startCount === null) return;
+    if (startCount === 0) {
+      setStartCount(null);
+      return;
+    }
+    const id = setTimeout(() => setStartCount((c) => (c === null ? null : c - 1)), 1000);
+    return () => clearTimeout(id);
+  }, [startCount]);
+  const hostStart = async () => {
+    if (!meReadyRef.current) await api.setReady(roomId, true).catch(() => {});
+    await channelRef.current?.send({ type: "broadcast", event: "countdown", payload: {} });
+    setStartCount(3);
+    setTimeout(() => void run(() => api.startGame(roomId)), 3200);
+  };
 
   const copyCode = () => {
     void navigator.clipboard.writeText(code);
@@ -251,9 +282,9 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
   };
 
   return (
-    <main className="mx-auto flex h-[100dvh] max-h-[100dvh] w-full max-w-lg flex-col overflow-hidden bg-background text-foreground select-none">
+    <main className="mx-auto flex h-[100dvh] max-h-[100dvh] w-full max-w-lg flex-col overflow-hidden bg-[#0b0b0c] text-[#efe4cf] select-none">
       {/* Pillar 3: Pinned Header */}
-      <header className="shrink-0 flex items-center justify-between border-b border-border bg-card/95 px-3 py-2.5 backdrop-blur-md">
+      <header className="m-2 mb-0 shrink-0 flex items-center justify-between rounded-[22px] bg-[#1c1c1d] px-4 py-3 text-[#efe4cf] shadow-[0_2px_10px_#0008]">
         <div className="flex items-center gap-2">
           <button
             onClick={() => void navigate({ to: "/" })}
@@ -262,11 +293,6 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
-          <img
-            src="/logo.png"
-            alt="Logo"
-            className="h-7 w-7 rounded-lg border border-red-500/30 object-cover"
-          />
           <div>
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-xs text-foreground">#{code}</span>
@@ -335,11 +361,6 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
               title="Syndicate Hierarchy"
               className="flex items-center gap-1 rounded-full border border-border bg-foreground/5 py-0.5 ps-1 pe-2 text-[11px] font-bold text-foreground hover:bg-foreground/10 transition"
             >
-              <img
-                src={profileStats.avatar_url || "/logo.png"}
-                alt="Profile"
-                className="h-5 w-5 rounded-full object-cover"
-              />
               <span className="text-[10px] tabular-nums text-amber-400">{profileStats.points}</span>
             </button>
           )}
@@ -356,7 +377,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
       </header>
 
       {/* Compact Horizontal Table Strip (Pillar 3 & Pillar 2) */}
-      {!(room.status === "IN_PROGRESS" && chatStyle === "bubbles") && (
+      {room.status !== "LOBBY" && !(room.status === "IN_PROGRESS" && chatStyle === "bubbles") && (
       <section className="shrink-0 border-b border-border bg-card/90 px-2 py-1.5">
         <PlayerGrid
           compact
@@ -375,65 +396,50 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
 
       {/* Main View Area */}
       {room.status === "LOBBY" && (
-        <section className="flex-1 overflow-y-auto p-4 space-y-4">
-          {/* Game Mode Selector matching prototype */}
-          <div className="rounded-3xl border border-border bg-card p-4 shadow-lg">
-            <p className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
-              {lang === "ar" ? "نمط اللعبة" : "Game mode"}
-            </p>
-            <div className="mt-2.5 grid grid-cols-3 gap-2">
-              {[
-                { id: "ONLINE" as const, label: lang === "ar" ? "أونلاين" : "Online", icon: "" },
-                {
-                  id: "HYBRID" as const,
-                  label: lang === "ar" ? "مختلط (روبوتات)" : "Hybrid (Bots)",
-                  icon: "",
-                },
-                { id: "SOLO" as const, label: lang === "ar" ? "فردي" : "Solo", icon: "" },
-              ].map((m) => (
-                <button
-                  key={m.id}
-                  type="button"
-                  onClick={() => setGameMode(m.id)}
-                  className={`flex flex-col items-center gap-1 rounded-2xl border p-2 text-xs font-semibold transition ${
-                    gameMode === m.id
-                      ? "border-primary bg-primary/20 text-foreground"
-                      : "border-border bg-foreground/[0.02] text-muted-foreground hover:bg-foreground/5"
-                  }`}
-                >
-                  <span className="text-base">{m.icon}</span>
-                  <span className="text-[10px]">{m.label}</span>
-                </button>
-              ))}
-            </div>
+        <section className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+          <p className="mt-3 text-center text-[26px] font-medium">
+            <span className="me-2 inline-block h-2 w-2 rounded-full bg-[#efe4cf]" />
+            {lang === "ar" ? "انتظار اللاعبين" : "Waiting for players"}
+          </p>
 
-            {/* Players count indicator */}
-            <div className="mt-4 flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">
-                {lang === "ar" ? "عدد المقاعد" : "Players"}
-              </span>
-              <span className="font-bold text-foreground tabular-nums">{players.length} / 15</span>
-            </div>
+          {/* Full-bleed table photo, a plain name beside each person */}
+          <div className="flex h-[58dvh] shrink-0 justify-center">
+            <SeatTable players={players} meId={me.user_id} messages={messages} />
+          </div>
 
-            {/* Bot filling toggle if host */}
+          <div dir="ltr" className="mx-auto mt-2 grid w-full max-w-[22rem] grid-cols-2 gap-x-7 gap-y-4 px-4">
+            {players.map((p) => (
+              <div
+                key={p.user_id}
+                dir={lang === "ar" ? "rtl" : "ltr"}
+                className={`flex h-28 flex-col items-center justify-center gap-3.5 rounded-2xl border bg-[#1c1c1d] text-[17px] shadow-[inset_0_0_0_4px_#1c1c1d,inset_0_0_0_5px_#2b2927] ${
+                  p.user_id === me.user_id ? "border-[#8c857a]" : "border-[#3a3836]"
+                }`}
+              >
+                <User className="h-10 w-10 text-[#8c857a]" strokeWidth={1.3} />
+                <span className="max-w-full truncate px-2">
+                  {p.username}
+                  {p.user_id === me.user_id ? (lang === "ar" ? " · أنت" : " · You") : ""}
+                  {p.is_ready ? " ✓" : ""}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 flex-1" />
+
+          <div className="m-2 space-y-2 rounded-[30px] bg-[#141415] p-3">
             {me.is_host && (
-              <div className="mt-4 flex items-center justify-between rounded-2xl border border-border bg-foreground/[0.02] p-3">
-                <div>
-                  <p className="text-xs font-bold text-foreground">
-                    {lang === "ar" ? "إضافة روبوتات ذكية" : "Add AI Bots"}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">
-                    {lang === "ar"
-                      ? "ملء المقاعد بروبوتات تفكّر"
-                      : "Fill empty seats with AI players"}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1.5">
+              <div className="flex items-center justify-between px-2 text-xs text-[#b9b2a6]">
+                <span>
+                  {lang === "ar" ? "إضافة روبوتات" : "AI bots"} · {players.length}/15
+                </span>
+                <span className="flex gap-1.5">
                   <button
                     type="button"
                     onClick={() => void run(() => api.addBots(roomId, 1))}
                     disabled={players.length >= 15}
-                    className="flex h-8 w-8 items-center justify-center rounded-xl bg-foreground/10 text-foreground font-bold hover:bg-foreground/20 disabled:opacity-40"
+                    className="h-8 w-8 rounded-xl bg-[#1c1c1d] font-bold disabled:opacity-40"
                   >
                     +
                   </button>
@@ -441,50 +447,38 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                     type="button"
                     onClick={() => void run(() => api.removeBots(roomId, 1))}
                     disabled={!players.some((p) => p.is_bot)}
-                    className="flex h-8 w-8 items-center justify-center rounded-xl bg-foreground/10 text-foreground font-bold hover:bg-foreground/20 disabled:opacity-40"
+                    className="h-8 w-8 rounded-xl bg-[#1c1c1d] font-bold disabled:opacity-40"
                   >
                     -
                   </button>
-                </div>
+                </span>
               </div>
             )}
-
-            {/* Ready & Start Action Buttons */}
-            <div className="mt-5 space-y-2">
+            <button
+              onClick={() => void run(() => api.setReady(roomId, !me.is_ready))}
+              className={`h-14 w-full rounded-[18px] text-lg ${
+                me.is_ready
+                  ? "border border-[#3a3836] bg-[#1c1c1d] text-[#b9b2a6]"
+                  : "bg-[#6b2f37] text-[#efe4cf]"
+              }`}
+            >
+              {me.is_ready ? t("lobby.cancelReady") : t("lobby.ready")}
+            </button>
+            {me.is_host && (
               <button
-                onClick={() => void run(() => api.setReady(roomId, !me.is_ready))}
-                className={`w-full rounded-2xl py-3 text-xs font-bold tracking-wider uppercase transition shadow-lg ${
-                  me.is_ready
-                    ? "border border-border bg-foreground/5 text-muted-foreground"
-                    : "bg-emerald-600 text-foreground hover:bg-emerald-500"
-                }`}
+                onClick={() => void run(() => api.startGame(roomId))}
+                disabled={players.length < 6 || players.some((p) => !p.is_ready)}
+                className="h-[68px] w-full rounded-[18px] bg-[#efe4cf] text-2xl font-medium text-[#111] disabled:opacity-40"
               >
-                {me.is_ready ? t("lobby.cancelReady") : t("lobby.ready")}
+                {lang === "ar" ? "بدء اللعبة" : t("lobby.start")}
               </button>
-
-              {me.is_host && (
-                <button
-                  onClick={() => void run(() => api.startGame(roomId))}
-                  disabled={players.length < 6 || players.some((p) => !p.is_ready)}
-                  className="w-full rounded-2xl bg-white py-3.5 text-xs font-black tracking-widest uppercase text-black transition-all hover:opacity-90 active:scale-98 disabled:opacity-40 shadow-xl"
-                >
-                  {t("lobby.start")}
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Share Room Code Card */}
-          <div className="rounded-3xl border border-border bg-card p-4 text-center">
-            <p className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
-              {lang === "ar" ? "رمز الغرفة للمشاركة" : "Room Code"}
-            </p>
-            <p className="mt-1 text-2xl font-black tracking-[0.25em] text-foreground">{code}</p>
+            )}
             <button
               onClick={copyCode}
-              className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-foreground/5 px-4 py-1.5 text-xs font-semibold text-foreground hover:bg-foreground/10"
+              className="w-full pb-1 text-center text-xs text-[#8c857a]"
             >
-              <span>{copied ? " Copied!" : " Share Code"}</span>
+              {lang === "ar" ? "رمز الغرفة" : "Room code"}: <b className="tracking-[0.25em] text-[#efe4cf]">{code}</b>
+              {copied ? (lang === "ar" ? " · نُسخ" : " · Copied") : ""}
             </button>
           </div>
         </section>
@@ -601,7 +595,18 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             onSent={refresh}
             feedOverride={
               chatStyle === "bubbles" && tab === "GLOBAL" ? (
-                <div className="flex h-full items-center justify-center p-2">
+                <div className="flex h-full flex-col overflow-hidden">
+                  {phase === "DAY_VOTING" && (
+                    <div className="flex flex-col items-center pt-3">
+                      <p className="text-[26px] font-medium">
+                        {lang === "ar" ? "التصويت - من تثق به؟" : "Voting - who do you trust?"}
+                      </p>
+                      <span className="mt-2 rounded-full bg-[#6b2f37] px-5 py-1.5 text-base">
+                        {lang === "ar" ? `الجولة ${room.round_number} · ${secondsLeft}s` : `Round ${room.round_number} · ${secondsLeft}s`}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex min-h-0 flex-1 justify-center">
                   <SeatTable
                     players={players}
                     meId={me.user_id}
@@ -612,6 +617,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                     voteCounts={phase === "DAY_VOTING" ? voteCounts : {}}
                     onSelect={(p) => handlePlayerTap(p.user_id)}
                   />
+                  </div>
                 </div>
               ) : undefined
             }
@@ -621,6 +627,29 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             }}
             actionSlot={
               <div className="shrink-0 px-2 py-1">
+                {phase === "DAY_VOTING" && me.is_alive && (
+                  <div className="space-y-2 pb-1">
+                    <p className="rounded-2xl bg-[#1c1c1d] py-3 text-center text-sm">
+                      {lang === "ar" ? "اختر لاعبًا للتصويت بالإقصاء · سرّي ونهائي" : "Pick a player to eliminate · secret and final"}
+                    </p>
+                    <div dir="ltr" className="grid grid-cols-[1fr_2fr] gap-3.5">
+                      <button
+                        onClick={() => setSelectedTargetPlayer(null)}
+                        className="h-[62px] rounded-2xl border border-[#6b2f37] text-xl"
+                      >
+                        {lang === "ar" ? "تخطي" : "Skip"}
+                      </button>
+                      <button
+                        onClick={() => void handleConfirmAction()}
+                        disabled={!selectedTargetPlayer}
+                        className="h-[62px] rounded-2xl bg-[#6b2f37] text-xl disabled:opacity-50"
+                      >
+                        {lang === "ar" ? "تصويت" : "Vote"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 {/* Day Turn Passing */}
                 {phase === "DAY_DISCUSSION" && isSpeaker && me.is_alive && (
                   <button
@@ -665,7 +694,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
       <ActionDrawer
         phase={phase}
         role={myRole}
-        target={selectedTargetPlayer}
+        target={phase === "DAY_VOTING" ? null : selectedTargetPlayer}
         players={players}
         voteCounts={phase === "DAY_VOTING" ? voteCounts : {}}
         onSelectTarget={(p) => setSelectedTargetPlayer(p)}

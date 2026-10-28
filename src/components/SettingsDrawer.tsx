@@ -1,4 +1,6 @@
 import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { isNarratorMuted, setNarratorMuted } from "@/lib/narrator";
 import { setChatStyle, useChatStyle } from "@/lib/chatStyle";
 import { ROLES as ROLE_ART } from "@/lib/roles";
 import { useI18n, type Lang } from "@/lib/i18n";
@@ -123,6 +125,7 @@ export function SettingsDrawer({ isOpen, onClose }: SettingsDrawerProps) {
 
         {/* Chat style */}
         <ChatStylePicker lang={lang} />
+        <NarratorToggle lang={lang} />
 
         {/* The Roles Section */}
         <div className="mt-4">
@@ -288,6 +291,31 @@ function ChatStylePicker({ lang }: { lang: string }) {
           </button>
         ))}
       </div>
+    </div>
+  );
+}
+
+function NarratorToggle({ lang }: { lang: string }) {
+  const [on, setOn] = useState(true);
+  useEffect(() => setOn(!isNarratorMuted()), []);
+  const label = lang === "ar" ? "صوت الراوي" : lang === "fr" ? "Voix du narrateur" : "Narrator voice";
+  return (
+    <div className="mt-4 flex items-center justify-between rounded-2xl border border-border bg-foreground/5 px-4 py-3">
+      <span className="text-sm font-semibold text-foreground">{label}</span>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={on}
+        aria-label={label}
+        onClick={() => {
+          const next = !on;
+          setOn(next);
+          setNarratorMuted(!next);
+        }}
+        className={`relative h-7 w-12 rounded-full transition ${on ? "bg-primary" : "bg-muted"}`}
+      >
+        <span className={`absolute top-1 h-5 w-5 rounded-full bg-background transition-all ${on ? "start-6" : "start-1"}`} />
+      </button>
     </div>
   );
 }
