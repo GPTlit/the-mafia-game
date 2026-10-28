@@ -1,7 +1,7 @@
-import cardWolf from "@/assets/card-wolf.png";
-import cardDetective from "@/assets/card-detective.png";
-import cardDoctor from "@/assets/card-doctor.png";
-import cardCivilian from "@/assets/card-civilian.png";
+const cardWolf = "/cards/card-wolf.webp";
+const cardDetective = "/cards/card-detective.webp";
+const cardDoctor = "/cards/card-doctor.webp";
+const cardCivilian = "/cards/card-civilian.webp";
 import { useI18n, type TFunc } from "@/lib/i18n";
 import logoAsset from "@/assets/mafia-logo.png.asset.json";
 
