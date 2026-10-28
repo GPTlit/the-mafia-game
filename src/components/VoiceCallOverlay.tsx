@@ -49,7 +49,7 @@ export function VoiceCallOverlay({
           </p>
         </div>
 
-        <div className="relative -mx-3 mt-2">
+        <div className="relative -mx-3 mt-2 flex h-[60dvh] justify-center">
           <SeatTable
             variant="night"
             players={players}

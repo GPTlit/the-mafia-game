@@ -403,9 +403,11 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
           </p>
 
           {/* Full-bleed table photo, a plain name beside each person */}
-          <SeatTable players={players} meId={me.user_id} messages={messages} />
+          <div className="flex h-[58dvh] shrink-0 justify-center">
+            <SeatTable players={players} meId={me.user_id} messages={messages} />
+          </div>
 
-          <div dir="ltr" className="mx-auto -mt-16 grid w-full max-w-[22rem] grid-cols-2 gap-x-7 gap-y-4 px-4">
+          <div dir="ltr" className="mx-auto mt-2 grid w-full max-w-[22rem] grid-cols-2 gap-x-7 gap-y-4 px-4">
             {players.map((p) => (
               <div
                 key={p.user_id}
@@ -593,7 +595,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
             onSent={refresh}
             feedOverride={
               chatStyle === "bubbles" && tab === "GLOBAL" ? (
-                <div className="flex h-full flex-col overflow-y-auto">
+                <div className="flex h-full flex-col overflow-hidden">
                   {phase === "DAY_VOTING" && (
                     <div className="flex flex-col items-center pt-3">
                       <p className="text-[26px] font-medium">
@@ -604,6 +606,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                       </span>
                     </div>
                   )}
+                  <div className="flex min-h-0 flex-1 justify-center">
                   <SeatTable
                     players={players}
                     meId={me.user_id}
@@ -614,6 +617,7 @@ function Room({ roomId, code }: { roomId: string; code: string }) {
                     voteCounts={phase === "DAY_VOTING" ? voteCounts : {}}
                     onSelect={(p) => handlePlayerTap(p.user_id)}
                   />
+                  </div>
                 </div>
               ) : undefined
             }
