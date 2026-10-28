@@ -109,9 +109,9 @@ export function SeatTable({
               <span className="pointer-events-none absolute left-0 top-0 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#f0e2c4]/25 blur-2xl" />
             )}
             {fresh && (
-              <div className="absolute bottom-full left-0 mb-3 w-max max-w-[10rem] -translate-x-1/2 animate-in fade-in zoom-in-95 rounded-2xl bg-[#efe4cf] px-3 py-2 text-xs font-medium leading-snug text-[#111] shadow-lg">
+              <div className="absolute top-full left-0 z-10 mt-9 w-max max-w-[10rem] -translate-x-1/2 animate-in fade-in zoom-in-95 rounded-2xl bg-[#efe4cf] px-3 py-2 text-xs font-medium leading-snug text-[#111] shadow-lg">
                 {msg.content ?? "..."}
-                <span className="absolute left-1/2 top-full -translate-x-1/2 border-x-[7px] border-t-[7px] border-x-transparent border-t-[#efe4cf]" />
+                <span className="absolute left-1/2 bottom-full -translate-x-1/2 border-x-[7px] border-b-[7px] border-x-transparent border-b-[#efe4cf]" />
               </div>
             )}
             <button
